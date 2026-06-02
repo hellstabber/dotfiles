@@ -1,0 +1,52 @@
+# Terminal
+font-family = SF Mono
+font-size = 12
+font-feature = +liga
+font-feature = +calt
+
+# Cursor
+cursor-style = bar
+cursor-style-blink = false
+
+# Pencere
+window-padding-x = 12
+window-padding-y = 10
+window-decoration = false
+resize-overlay = never
+
+# Performans
+
+# Renk teması — monokrom / dijital minimalist
+background = #0e0e0e
+foreground = #e0e0e0
+
+# Cursor rengi
+cursor-color = #f0f0f0
+cursor-text = #0e0e0e
+
+# Seçim
+selection-background = #2a2a2a
+selection-foreground = #e0e0e0
+
+# Normal renkler (0-7)
+palette = 0=#1a1a1a
+palette = 1=#c87272
+palette = 2=#7a9e7a
+palette = 3=#b8a87a
+palette = 4=#7a90b8
+palette = 5=#9a7ab8
+palette = 6=#7aaab8
+palette = 7=#c0c0c0
+
+# Bright renkler (8-15)
+palette = 8=#3a3a3a
+palette = 9=#d48a8a
+palette = 10=#8ab88a
+palette = 11=#c8b88a
+palette = 12=#8aa0c8
+palette = 13=#aa8ac8
+palette = 14=#8abac8
+palette = 15=#ffffff
+
+# Sway entegrasyonu
+class = terminal
