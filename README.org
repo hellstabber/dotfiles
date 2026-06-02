@@ -1,18 +1,18 @@
 * My Personal Dotfiles
-
-managed by [[https://chezmoi.io][Chezmoi]]
+  managed by [[https://chezmoi.io][Chezmoi]]
 
 ** Goals
-+ Distraction-free CLI enviroment
-+ Efficient reading/writing and note-taking environment with [[https://www.gnu.org/software/emacs/][Emacs]]
-+ Using my computer efficiently
+   - Distraction-free CLI environment
+   - Efficient reading/writing and note-taking with Emacs
+   - Consistent experience across Arch Linux and macOS
 
 ** Tools
-| Category             | Application | Conf              |
-|----------------------+-------------+-------------------|
-| Shell                | Zsh         | [[https://github.com/hellstabber/nokta/blob/main/dot_zshrc][.zshrc]]            |
-| Terminal Emulator    | Alacritty   | [[https://github.com/hellstabber/nokta/tree/main/dot_config/alacritty][.config/alacritty]] |
-| Window Manager       | i3wm        | [[https://github.com/hellstabber/nokta/tree/main/dot_config/i3][.config/i3]]        |
-| Text Editor          | Neovim      | [[https://github.com/hellstabber/nokta/tree/main/dot_config/nvim][.config/nvim]]      |
-| Text Editor          | Emacs       | [[https://github.com/hellstabber/nokta/tree/main/dot_config/doom][.config/doom]]           |
-| Terminal Multiplexer | tmux        | [[https://github.com/hellstabber/nokta/tree/main/dot_config/tmux][.config/tmux]]      |
+   | Category           | Application  | Config                  |
+   |--------------------|--------------|-------------------------|
+   | Shell              | Zsh + OMZ    | dot_zshrc               |
+   | Terminal           | Ghostty      | dot_config/ghostty      |
+   | Window Manager     | Sway         | dot_config/sway         |
+   | Status Bar         | sway-bar     | dot_config/sway/scripts |
+   | Text Editor        | Neovim       | dot_config/nvim         |
+   | Text Editor        | Doom Emacs   | dot_config/doom         |
+   | Notifications      | Dunst        | dot_config/dunst        |
