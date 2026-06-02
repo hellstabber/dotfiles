@@ -1,0 +1,47 @@
+# swaylock config
+# ~/.config/swaylock/config
+
+ignore-empty-password
+show-failed-attempts
+
+# Display
+color=0e0e0e
+bs-hl-color=505050
+caps-lock-bs-hl-color=505050
+caps-lock-key-hl-color=f0f0f0
+
+# Inside  (input area)
+inside-color=0e0e0e00
+inside-clear-color=0e0e0e00
+inside-ver-color=0e0e0e00
+inside-wrong-color=0e0e0e00
+
+# Ring
+ring-color=1e1e1e
+ring-clear-color=505050
+ring-ver-color=f0f0f0
+ring-wrong-color=3a1a1a
+
+# Line
+line-color=0e0e0e00
+line-clear-color=0e0e0e00
+line-ver-color=0e0e0e00
+line-wrong-color=0e0e0e00
+
+# Text
+text-color=50505000
+text-clear-color=50505000
+text-ver-color=e0e0e000
+text-wrong-color=50505000
+
+# Key
+key-hl-color=e0e0e0
+separator-color=0e0e0e00
+
+# Font
+font=SF Pro Text
+font-size=0
+
+# Layout
+indicator-radius=40
+indicator-thickness=2

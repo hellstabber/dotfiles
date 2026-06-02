@@ -1,0 +1,36 @@
+# swaynag config
+# ~/.config/swaynag/config
+
+[warning]
+background=0e0e0e
+border=1e1e1e
+border-bottom=f0f0f0
+button-background=1a1a1a
+button-border-size=0
+button-gap=8
+button-margin-right=4
+button-padding=8
+button-text=e0e0e0
+details-background=0e0e0e
+details-border-size=1
+message-padding=12
+text=e0e0e0
+font=SF Pro Text 13
+edge=bottom
+
+[error]
+background=0e0e0e
+border=1e1e1e
+border-bottom=c87272
+button-background=1a1a1a
+button-border-size=0
+button-gap=8
+button-margin-right=4
+button-padding=8
+button-text=e0e0e0
+details-background=0e0e0e
+details-border-size=1
+message-padding=12
+text=e0e0e0
+font=SF Pro Text 13
+edge=bottom

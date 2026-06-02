@@ -1,0 +1,299 @@
+# Default config for sway
+#
+# Read `man 5 sway` for a complete reference.
+
+### Variables
+
+set $mod Mod4
+set $left h
+set $down j
+set $up k
+set $right l
+set $term ghostty
+set $menu bemenu-run --fn "SF Pro Text 13" \
+  --nb "#0e0e0e" --nf "#505050" \
+  --sb "#f0f0f0" --sf "#0e0e0e" \
+  --hb "#1a1a1a" --hf "#e0e0e0" \
+  -p "" -H 30
+set $dmenu bemenu --fn "SF Pro Text 13" \
+  --nb "#0e0e0e" --nf "#505050" \
+  --sb "#f0f0f0" --sf "#0e0e0e" \
+  --hb "#1a1a1a" --hf "#e0e0e0" \
+  -p "" -H 30
+
+
+### Output configuration
+
+output * bg $(ls ~/.config/backgrounds/* | shuf -n1) fill
+
+
+## Displays
+
+# Desktop --- L
+output "Ancor Communications Inc ASUS VS228 D4LMQS101133" {
+    mode 1920x1080@60Hz
+    pos 1920 0
+}
+
+# Desktop --- R
+output "Ancor Communications Inc ASUS VS228 D4LMQS101158" {
+    mode 1920x1080@60Hz
+    pos 0 0
+}
+
+# Laptop
+output eDP-1 {
+    mode 1920x1080@60Hz
+    pos 0 0
+}
+
+### Idle configuration
+
+exec swayidle -w \
+         timeout 300 'swaylock -f -c 000000' \
+         timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
+         before-sleep 'swaylock -f -c 000000'
+
+
+### Services
+
+# Clipboard
+exec wl-paste --watch cliphist store
+
+# Night light
+exec wlsunset -S '06:30' -s '19:30' -d 1800
+
+# Notifications
+exec dunst
+
+# Syncthing
+exec syncthing serve
+
+
+### Input configuration
+
+input type:touchpad {
+    dwt enabled
+    tap enabled
+    natural_scroll enabled
+    middle_emulation enabled
+}
+
+input type:keyboard {
+    xkb_layout "tr"
+    repeat_delay 200
+    repeat_rate 30
+}
+
+
+### Window appearance
+
+default_border pixel 1
+default_floating_border pixel 1
+gaps inner 6
+gaps outer 0
+smart_gaps on
+smart_borders on
+
+focus_follows_mouse no
+focus_on_window_activation smart
+
+# <border>  <background>  <text>    <indicator>  <child_border>
+client.focused          #f0f0f0   #0e0e0e   #e0e0e0   #f0f0f0   #f0f0f0
+client.focused_inactive #1e1e1e   #0e0e0e   #505050   #1e1e1e   #1e1e1e
+client.unfocused        #1a1a1a   #0e0e0e   #383838   #1a1a1a   #1a1a1a
+client.urgent           #2a2a2a   #0e0e0e   #e0e0e0   #2a2a2a   #2a2a2a
+
+# Tag X11 windows
+for_window [shell="xwayland"] title_format "<span>[X11] %title</span>"
+
+
+### Key bindings
+
+# Launch terminal
+bindsym $mod+Return exec $term
+
+# Kill focused window
+bindsym $mod+Shift+q kill
+
+# Launch application launcher
+bindsym $mod+d exec $menu
+
+# Show clipboard history
+bindsym $mod+Alt+v exec cliphist list \
+    | $dmenu \
+    | cliphist decode \
+    | wl-copy
+
+# Delete from clipboard history
+bindsym $mod+Alt+Shift+v exec cliphist list \
+    | $dmenu \
+    | cliphist delete
+
+# Drag floating windows by holding $mod and left mouse button
+# Resize with right mouse button + $mod
+floating_modifier $mod normal
+
+# Reload config
+bindsym $mod+Shift+c reload
+
+# Exit sway
+bindsym $mod+Shift+e exec swaynag -t warning \
+    -m 'Do you want to exit sway?' \
+    -B 'Yes, exit' 'swaymsg exit'
+
+# Lock screen
+bindsym Pause exec swaylock -f -c 000000
+
+# Suspend
+bindsym --locked $mod+Pause exec systemctl suspend
+
+
+### Focus
+
+bindsym $mod+$left  focus left
+bindsym $mod+$down  focus down
+bindsym $mod+$up    focus up
+bindsym $mod+$right focus right
+bindsym $mod+Left   focus left
+bindsym $mod+Down   focus down
+bindsym $mod+Up     focus up
+bindsym $mod+Right  focus right
+
+
+### Window moving
+
+bindsym $mod+Shift+$left  move left
+bindsym $mod+Shift+$down  move down
+bindsym $mod+Shift+$up    move up
+bindsym $mod+Shift+$right move right
+bindsym $mod+Shift+Left   move left
+bindsym $mod+Shift+Down   move down
+bindsym $mod+Shift+Up     move up
+bindsym $mod+Shift+Right  move right
+
+
+### Workspaces
+
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+bindsym $mod+3 workspace number 3
+bindsym $mod+4 workspace number 4
+bindsym $mod+5 workspace number 5
+bindsym $mod+6 workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+bindsym $mod+0 workspace number 10
+
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+bindsym $mod+Shift+0 move container to workspace number 10
+
+# Switch to previous/next workspace
+bindsym $mod+bracketleft  workspace prev
+bindsym $mod+bracketright workspace next
+
+
+### Layout
+
+bindsym $mod+b splith
+bindsym $mod+v splitv
+
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+bindsym $mod+f fullscreen
+
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+bindsym $mod+a focus parent
+
+
+### Scratchpad
+
+# Move focused window to scratchpad
+bindsym $mod+Shift+minus move scratchpad
+
+# Show/cycle scratchpad windows
+bindsym $mod+minus scratchpad show
+
+
+### Resize mode
+
+mode "resize" {
+    bindsym $left  resize shrink width 10px
+    bindsym $down  resize grow height 10px
+    bindsym $up    resize shrink height 10px
+    bindsym $right resize grow width 10px
+
+    bindsym Left   resize shrink width 10px
+    bindsym Down   resize grow height 10px
+    bindsym Up     resize shrink height 10px
+    bindsym Right  resize grow width 10px
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+
+### Media & system keys
+
+# Volume
+bindsym --locked XF86AudioMute        exec pactl set-sink-mute \@DEFAULT_SINK@ toggle
+bindsym --locked XF86AudioLowerVolume exec pactl set-sink-volume \@DEFAULT_SINK@ -5%
+bindsym --locked XF86AudioRaiseVolume exec pactl set-sink-volume \@DEFAULT_SINK@ +5%
+bindsym --locked XF86AudioMicMute     exec pactl set-source-mute \@DEFAULT_SOURCE@ toggle
+
+# Volume via function keys
+bindsym --locked F1 exec pactl set-sink-mute \@DEFAULT_SINK@ toggle
+bindsym --locked F2 exec pactl set-sink-volume \@DEFAULT_SINK@ -5%
+bindsym --locked F3 exec pactl set-sink-volume \@DEFAULT_SINK@ +5%
+
+# Media playback
+bindsym --locked XF86AudioPlay  exec playerctl play-pause
+bindsym --locked XF86AudioPause exec playerctl play-pause
+bindsym --locked XF86AudioPrev  exec playerctl previous
+bindsym --locked XF86AudioNext  exec playerctl next
+bindsym --locked XF86AudioStop  exec playerctl stop
+
+# Brightness
+bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%-
+bindsym --locked XF86MonBrightnessUp   exec brightnessctl set 5%+
+
+# Screenshot (region select)
+bindsym Print exec grim -g "$(slurp)" - | satty --filename -
+
+
+### Status Bar
+
+bar {
+    position top
+    font "SF Pro Text 13"
+
+    status_command ~/.config/sway/scripts/status.sh
+
+    colors {
+        background #0e0e0e
+        statusline #e0e0e0
+        separator  #1e1e1e
+
+        focused_workspace  #f0f0f0 #f0f0f0 #0e0e0e
+        active_workspace   #1a1a1a #1a1a1a #909090
+        inactive_workspace #0e0e0e #0e0e0e #505050
+        urgent_workspace   #2a2a2a #2a2a2a #e0e0e0
+        binding_mode       #1a1a1a #1a1a1a #909090
+    }
+}
+
+
+include /etc/sway/config.d/*
