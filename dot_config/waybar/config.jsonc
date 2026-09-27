@@ -1,0 +1,55 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 28,
+
+  "modules-left": [
+    "sway/workspaces"
+  ],
+
+  "modules-center": [
+    "sway/window"
+  ],
+
+  "modules-right": [
+    "custom/weather",
+    "network",
+    "wireplumber",
+    "clock"
+  ],
+
+  "sway/workspaces": {
+    "disable-scroll": true,
+    "all-outputs": false,
+    "format": "{name}"
+  },
+
+  "sway/window": {
+    "max-length": 80
+  },
+
+  "network": {
+    "format-ethernet": "NET {ipaddr}",
+    "format-wifi": "WIFI {signalStrength}%",
+    "format-disconnected": "NET down",
+    "tooltip": true
+  },
+
+  "wireplumber": {
+    "format": "VOL {volume}%",
+    "format-muted": "MUTE",
+    "on-click": "pavucontrol"
+  },
+
+  "clock": {
+    "format": "{:%d-%m-%Y  %H:%M}",
+    "tooltip-format": "<tt>{calendar}</tt>"
+  },
+
+  "custom/weather": {
+  "exec": "curl -s 'https://wttr.in/Ankara?format=%c+%t'",
+  "interval": 1800,
+  "return-type": "text",
+  "tooltip": true
+}
+}
