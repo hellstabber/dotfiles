@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+set -u
+
+WALLPAPER_DIR="$HOME/.config/backgrounds"
+INTERVAL=1800
+
+mapfile -d '' wallpapers < <(
+    find "$WALLPAPER_DIR" -type f \
+        \( -iname '*.jpg' \
+        -o -iname '*.jpeg' \
+        -o -iname '*.png' \
+        -o -iname '*.webp' \) \
+        -print0
+)
+
+if (( ${#wallpapers[@]} == 0 )); then
+    echo "No wallpapers found in $WALLPAPER_DIR" >&2
+    exit 1
+fi
+
+last=""
+
+cleanup() {
+    [[ -n "${swaybg_pid:-}" ]] && kill "$swaybg_pid" 2>/dev/null
+}
+
+trap cleanup EXIT INT TERM
+
+while true; do
+    if (( ${#wallpapers[@]} == 1 )); then
+        wallpaper="${wallpapers[0]}"
+    else
+        while :; do
+            wallpaper="${wallpapers[RANDOM % ${#wallpapers[@]}]}"
+            [[ "$wallpaper" != "$last" ]] && break
+        done
+    fi
+
+    last="$wallpaper"
+
+    if [[ -n "${swaybg_pid:-}" ]]; then
+        kill "$swaybg_pid" 2>/dev/null
+        wait "$swaybg_pid" 2>/dev/null
+    fi
+
+    swaybg -i "$wallpaper" -m fill &
+    swaybg_pid=$!
+
+    sleep "$INTERVAL"
+done
