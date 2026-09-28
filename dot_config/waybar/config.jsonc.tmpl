@@ -14,7 +14,9 @@
   "modules-right": [
     "custom/weather",
     "network",
+    {{ if ne .machine "desktop" }}
     "battery",
+    {{ end }}
     "wireplumber",
     "clock"
   ],
