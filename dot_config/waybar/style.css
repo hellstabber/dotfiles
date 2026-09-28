@@ -31,10 +31,9 @@ window#waybar {
 
 #network,
 #wireplumber,
+#battery,
+#custom-weather,
 #clock {
     padding: 0 10px;
 }
 
-#custom-weather {
-    padding: 0 10px;
-}
