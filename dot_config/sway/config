@@ -26,14 +26,12 @@ output DP-1 {
     mode 1920x1080@60Hz
     position 0 0
     scale 1
-    bg #111111 solid_color
 }
 
 output HDMI-A-1 {
     mode 1920x1080@60Hz
     position 1920 0
     scale 1
-    bg #111111 solid_color
 }
 
 
@@ -198,7 +196,7 @@ bindsym $mod+Print exec sh -c \
 
 
 # ============================================================
-# Audio / Media
+# Audio / Media / Display brightness
 # ============================================================
 
 bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
@@ -209,6 +207,16 @@ bindsym XF86AudioPlay exec playerctl play-pause
 bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPrev exec playerctl previous
 
+# Display brightness
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+bindsym XF86MonBrightnessUp exec brightnessctl set +5%
+
+# Launcher
+bindsym XF86LaunchA exec fuzzel
+
+# Keyboard backlight
+bindsym XF86KbdBrightnessDown exec brightnessctl --device='smc::kbd_backlight' set 10%-
+bindsym XF86KbdBrightnessUp exec brightnessctl --device='smc::kbd_backlight' set +10%
 
 # ============================================================
 # Session
@@ -228,6 +236,7 @@ bindsym $mod+Shift+e exec swaynag \
 
 exec waybar
 exec mako
+exec ~/.local/bin/random_wallpaper
 
 exec swayidle -w \
     timeout 600 'swaylock -f' \
