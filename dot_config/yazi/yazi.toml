@@ -1,0 +1,18 @@
+[manager]
+show_hidden = true
+sort_by = "natural"
+sort_dir_first = true
+linemode = "size"
+
+[preview]
+wrap = "yes"
+
+[opener]
+edit = [
+    { run = '${EDITOR:-nvim} "$@"', block = true, desc = "Edit" }
+]
+
+[open]
+prepend_rules = [
+    { mime = "text/*", use = "edit" }
+]
