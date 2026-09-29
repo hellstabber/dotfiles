@@ -1,0 +1,28 @@
+[user]
+    name = Eren Kaplan
+
+[init]
+    defaultBranch = main
+
+[core]
+    editor = nvim
+    pager = less -FRX
+
+[pull]
+    rebase = false
+
+[push]
+    autoSetupRemote = true
+
+[fetch]
+    prune = true
+
+[color]
+    ui = auto
+
+[alias]
+    st = status
+    co = checkout
+    br = branch
+    ci = commit
+    lg = log --oneline --graph --decorate --all
