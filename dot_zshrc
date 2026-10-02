@@ -8,14 +8,15 @@ export PAGER=less
 
 export LESS='-R'
 
-export PATH="$HOME/.config/emacs/bin:$PATH"
 
 # ============================================================
 # Path
 # ============================================================
 
 export PATH="$HOME/.local/bin:$PATH"
-
+export PATH="$HOME/go/bin:$PATH"
+export PATH="$HOME/go/bin:$PATH"
+export PATH="$HOME/.config/emacs/bin:$PATH"
 
 # ============================================================
 # Shell behavior
@@ -46,6 +47,7 @@ compinit
 
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
+eval "$(mise activate zsh)"
 
 source <(fzf --zsh)
 

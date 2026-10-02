@@ -1,0 +1,62 @@
+#!/bin/sh
+
+. "$(dirname "$0")/waybar-colors"
+
+record_dir="${XDG_VIDEOS_DIR:-$HOME/Videos}/Recordings"
+
+output_off="$(
+    printf \
+        '{"text":"REC","tooltip":"Screen recording: inactive","class":"inactive"}'
+)"
+
+output_rec="$(
+    printf \
+        '{"text":"REC","tooltip":"Screen recording: active","class":"recording"}'
+)"
+
+if pgrep -x wf-recorder >/dev/null 2>&1; then
+
+    if [ "${1:-}" = "toggle" ]; then
+        pkill -INT -x wf-recorder
+
+        notify-send \
+            -a screenrecorder \
+            -t 3000 \
+            "Screen recording" \
+            "Recording stopped."
+
+        printf '%s\n' "$output_off"
+        exit 0
+    fi
+
+    printf '%s\n' "$output_rec"
+    exit 0
+fi
+
+if [ "${1:-}" = "toggle" ]; then
+
+    geometry="$(slurp)" || exit 0
+
+    mkdir -p "$record_dir"
+
+    filename="$record_dir/$(date '+screenrecording-%Y-%m-%d-%H%M%S.mp4')"
+
+    notify-send \
+        -a screenrecorder \
+        -t 3000 \
+        "Screen recording" \
+        "Recording started."
+
+    sleep 1
+
+    wf-recorder \
+        -g "$geometry" \
+        -f "$filename" \
+        >/dev/null 2>&1 &
+
+    printf '%s\n' "$output_rec"
+
+    exit 0
+fi
+
+printf '%s\n' "$output_off"

@@ -1,0 +1,29 @@
+#!/bin/sh
+
+response="$(
+    curl \
+        -4 \
+        -fsS \
+        --max-time 5 \
+        https://ipinfo.io/json
+)" || {
+    notify-send \
+        -a network \
+        "Public IP" \
+        "Unable to retrieve public IP information."
+
+    exit 1
+}
+
+ip="$(printf '%s' "$response" | jq -r '.ip // "unknown"')"
+city="$(printf '%s' "$response" | jq -r '.city // "unknown"')"
+region="$(printf '%s' "$response" | jq -r '.region // "unknown"')"
+country="$(printf '%s' "$response" | jq -r '.country // "unknown"')"
+org="$(printf '%s' "$response" | jq -r '.org // "unknown"')"
+
+notify-send \
+    -a network \
+    "Public IP" \
+    "IP: $ip
+Location: $city, $region, $country
+Network: $org"

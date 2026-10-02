@@ -1,0 +1,94 @@
+#!/bin/sh
+
+. "$(dirname "$0")/waybar-colors"
+
+active_vpn()
+{
+    nmcli \
+        -t \
+        -f NAME,TYPE \
+        connection show --active |
+    awk -F ':' \
+        '$2 == "wireguard" || $2 == "vpn" {
+            print $1
+            exit
+        }'
+}
+
+available_vpns()
+{
+    nmcli \
+        -t \
+        -f NAME,TYPE \
+        connection show |
+    awk -F ':' \
+        '$2 == "wireguard" || $2 == "vpn" {
+            print $1
+        }'
+}
+
+case "${1:-current}" in
+
+    current)
+        vpn="$(active_vpn)"
+
+        if [ -n "$vpn" ]; then
+            printf \
+                '{"text":"VPN <span color='\''%s'\''>%s</span>","tooltip":"VPN connected: %s","class":"connected"}\n' \
+                "$text" \
+                "$vpn" \
+                "$vpn"
+        else
+            printf \
+                '{"text":"VPN <span color='\''%s'\''>OFF</span>","tooltip":"No active VPN","class":"disconnected"}\n' \
+                "$muted"
+        fi
+        ;;
+
+
+    connect)
+        vpn="$(
+            available_vpns |
+                fuzzel \
+                    --dmenu \
+                    --prompt="VPN > "
+        )"
+
+        [ -n "$vpn" ] || exit 0
+
+        current="$(active_vpn)"
+
+        if [ -n "$current" ] && [ "$current" != "$vpn" ]; then
+            nmcli connection down "$current"
+        fi
+
+        nmcli connection up "$vpn" || exit 1
+
+        sleep 2
+
+        "$HOME/.local/bin/get-public-ip-info"
+        ;;
+
+
+    disconnect)
+        vpn="$(active_vpn)"
+
+        [ -n "$vpn" ] || exit 0
+
+        nmcli connection down "$vpn"
+
+        notify-send \
+            -a network \
+            "VPN" \
+            "Disconnected from $vpn"
+        ;;
+
+
+    *)
+        printf \
+            'usage: %s {current|connect|disconnect}\n' \
+            "$0" >&2
+
+        exit 1
+        ;;
+esac

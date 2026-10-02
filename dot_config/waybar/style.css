@@ -1,39 +1,168 @@
+@define-color nr_void      #0b090d;
+@define-color nr_panel     #17111d;
+@define-color nr_line      #2a2030;
+
+@define-color nr_purple    #8f6aa8;
+@define-color nr_purple_lt #b89ad0;
+
+@define-color nr_amber     #c98b5b;
+@define-color nr_red       #8f2d3c;
+
+@define-color nr_text      #e6dfe8;
+@define-color nr_muted     #7f7187;
+@define-color nr_dim       #54495a;
+
+
 * {
-    font-family: monospace;
-    font-size: 13px;
     border: none;
     border-radius: 0;
+    font-family: "IBM Plex Mono", "Symbols Nerd Font Mono", monospace;
+    font-size: 11px;
+    font-weight: 400;
+
+    min-height: 26px;
 }
 
 window#waybar {
-    background: #111111;
-    color: #dddddd;
+    background-color: @nr_void;
+    color: @nr_dim;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+tooltip {
+    background-color: @nr_panel;
+    border: 1px solid @nr_line;
+}
+
+tooltip label {
+    color: @nr_text;
+}
+
+.module {
+    margin: 0 10px;
+    padding: 0;
+}
+
+#workspaces {
+    margin-left: 20px;
 }
 
 #workspaces button {
-    padding: 0 8px;
-    color: #888888;
+    min-width: 32px;
+    padding: 4px 6px;
+
+    color: @nr_dim;
+    background: transparent;
+
+    box-shadow: none;
+    text-shadow: none;
+}
+
+#workspaces button:hover {
+    color: @nr_purple_lt;
     background: transparent;
 }
 
-#workspaces button.focused {
-    color: #ffffff;
+#workspaces button.focused,
+#workspaces button.active {
+    color: @nr_purple;
 }
 
 #workspaces button.urgent {
-    color: #ffffff;
-    background: #801900;
+    color: @nr_text;
+    background-color: @nr_red;
 }
 
 #window {
-    padding: 0 10px;
+    color: @nr_text;
 }
 
-#network,
-#wireplumber,
-#battery,
-#custom-weather,
+#mode {
+    color: @nr_text;
+
+    border: 2px solid @nr_purple;
+
+    padding: 0 8px;
+}
+
+#network {
+    color: @nr_text;
+}
+
+#custom-vpn.connected {
+    color: @nr_purple;
+}
+
+#custom-vpn.disconnected {
+    color: @nr_dim;
+}
+
+#cpu,
+#memory,
+#disk {
+    color: @nr_text;
+}
+
+#cpu.warning {
+    color: @nr_amber;
+}
+
+#cpu.critical {
+    color: @nr_red;
+}
+
+#custom-screenrecord {
+    color: @nr_dim;
+}
+
+#custom-screenrecord.recording {
+    color: @nr_red;
+}
+
+#custom-syncthing {
+    color: @nr_text;
+}
+
+#custom-syncthing.disconnected {
+    color: @nr_dim;
+}
+
+#custom-weather {
+    color: @nr_amber;
+}
+
+#wireplumber {
+    color: @nr_text;
+}
+
+#battery {
+    color: @nr_text;
+}
+
+#battery.warning {
+    color: @nr_amber;
+}
+
+#battery.critical:not(.charging) {
+    color: @nr_red;
+}
+
+#backlight {
+    color: @nr_muted;
+}
+
+#tray {
+    padding: 0 4px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
 #clock {
-    padding: 0 10px;
+    color: @nr_text;
+    margin-right: 4px;
 }
-

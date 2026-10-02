@@ -1,27 +1,28 @@
-color=111111
+color=0b090d
 
-font=monospace
+font=IBM Plex Mono
 font-size=24
 
 indicator
 indicator-radius=90
 indicator-thickness=8
 
-inside-color=111111ff
-ring-color=801900ff
+inside-color=17111dff
+ring-color=8f6aa8ff
+
 line-color=00000000
 separator-color=00000000
 
-key-hl-color=ffffffff
-bs-hl-color=ff4444ff
+key-hl-color=b89ad0ff
+bs-hl-color=8f2d3cff
 
-text-color=ddddddff
-text-clear-color=ddddddff
-text-caps-lock-color=ddddddff
-text-ver-color=ddddddff
-text-wrong-color=ff4444ff
+text-color=e6dfe8ff
+text-clear-color=e6dfe8ff
+text-caps-lock-color=c98b5bff
+text-ver-color=e6dfe8ff
+text-wrong-color=8f2d3cff
 
-ring-clear-color=801900ff
-ring-caps-lock-color=801900ff
-ring-ver-color=ffffffff
-ring-wrong-color=ff4444ff
+ring-clear-color=7f7187ff
+ring-caps-lock-color=c98b5bff
+ring-ver-color=b89ad0ff
+ring-wrong-color=8f2d3cff

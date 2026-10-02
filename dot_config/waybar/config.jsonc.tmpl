@@ -4,78 +4,398 @@
   "height": 28,
 
   "modules-left": [
-    "sway/workspaces"
+    "privacy",
+    "group/network",
+    "group/resources",
+    "custom/screenrecord",
+    "custom/syncthing"
   ],
 
   "modules-center": [
-    "sway/window"
+    "group/taskbar"
   ],
 
   "modules-right": [
-    "custom/weather",
-    "network",
-    {{ if ne .machine "desktop" }}
-    "battery",
-    {{ end }}
+{{ if or (eq .chezmoi.hostname "funkypunk") (eq .chezmoi.hostname "badapple") }}
+    "backlight",
+{{ end }}
     "wireplumber",
-    "clock"
+{{ if or (eq .chezmoi.hostname "funkypunk") (eq .chezmoi.hostname "badapple") }}
+    "battery",
+{{ end }}
+    "custom/weather",
+    "group/clock"
   ],
 
-  "sway/workspaces": {
-    "disable-scroll": true,
-    "all-outputs": false,
-    "format": "{name}"
+
+  // ==========================================================
+  // Privacy
+  // ==========================================================
+
+  "privacy": {
+    "icon-spacing": 4,
+    "icon-size": 16,
+    "transition-duration": 250,
+
+    "modules": [
+      {
+        "type": "screenshare",
+        "tooltip": true
+      },
+      {
+        "type": "audio-in",
+        "tooltip": true
+      }
+    ]
+  },
+
+
+  // ==========================================================
+  // Network
+  // ==========================================================
+
+  "group/network": {
+    "orientation": "horizontal",
+
+    "modules": [
+      "network#stats",
+      "network#connection",
+      "custom/vpn"
+    ],
+
+    "drawer": {
+      "transition-left-to-right": true,
+      "transition-duration": 500
+    }
+  },
+
+  "network#stats": {
+    "family": "ipv4",
+
+    "format":
+      "BWD {bandwidthDownBytes} <span color='#888888'>{bandwidthUpBytes}</span>",
+
+    "tooltip-format": "{ifname}"
+  },
+
+  "network#connection": {
+    "family": "ipv4",
+
+    "format": "{ifname}",
+
+    "format-wifi":
+      "WiFi {essid} <span color='#888888'>{signalStrength}%</span>",
+
+    "format-ethernet":
+      "ETH {ipaddr}/<span color='#888888'>{cidr}</span>",
+
+    "format-disconnected": "OFF",
+
+    "tooltip-format": "{ifname} via {gwaddr}",
+    "tooltip-format-wifi": "{essid} ({signalStrength}%)",
+    "tooltip-format-ethernet": "{ifname}",
+    "tooltip-format-disconnected": "Disconnected"
+  },
+
+  "custom/vpn": {
+    "format": "VPN <span color='#888888'>{}</span>",
+    "return-type": "json",
+
+    "exec": "~/.local/bin/waybar-vpn current",
+
+    "on-click": "~/.local/bin/waybar-vpn connect",
+    "on-click-middle": "~/.local/bin/waybar-vpn disconnect",
+    "on-click-right": "~/.local/bin/get-public-ip-info",
+
+    "interval": 30
+  },
+
+
+  // ==========================================================
+  // Resources
+  // ==========================================================
+
+  "group/resources": {
+    "orientation": "horizontal",
+
+    "modules": [
+      "cpu",
+      "memory",
+      "disk#root"
+    ],
+
+    "drawer": {
+      "transition-left-to-right": true,
+      "transition-duration": 500
+    }
+  },
+
+  "cpu": {
+    "interval": 30,
+
+    "format":
+      "CPU <span color='#888888'>{usage}%</span>",
+
+    "states": {
+      "warning": 70,
+      "critical": 90
+    }
+  },
+
+  "memory": {
+    "interval": 60,
+
+    "format":
+      "MEM {used:3.1f}GiB/<span color='#888888'>{total:3.1f}GiB</span>"
+  },
+
+  "disk#root": {
+    "interval": 360,
+    "path": "/",
+
+    "format":
+      "SSD {used}/<span color='#888888'>{total}</span>"
+  },
+
+
+  // ==========================================================
+  // Screen recording
+  // ==========================================================
+
+  "custom/screenrecord": {
+    "format": "{}",
+    "return-type": "json",
+
+    "exec": "~/.local/bin/waybar-screenrecord",
+    "on-click": "~/.local/bin/waybar-screenrecord toggle",
+
+    "interval": 3
+  },
+
+
+  // ==========================================================
+  // Syncthing
+  // ==========================================================
+
+  "custom/syncthing": {
+    "format": "{}",
+    "return-type": "json",
+
+    "exec": "~/.local/bin/waybar-syncthing",
+
+    "interval": 30
+  },
+
+
+  // ==========================================================
+  // Taskbar
+  // ==========================================================
+
+  "group/taskbar": {
+    "orientation": "horizontal",
+
+    "modules": [
+      "sway/window",
+      "sway/workspaces",
+      "sway/mode",
+      "tray"
+    ],
+
+    "drawer": {
+      "transition-left-to-right": true,
+      "transition-duration": 500
+    }
   },
 
   "sway/window": {
-    "max-length": 80
+    "all-outputs": false,
+    "format": "{}",
+    "icon": false,
+
+    "max-length": 160,
+
+    "rewrite": {
+      "(.*) — Mozilla Firefox": "WEB $1",
+      "(.*) — LibreWolf": "WEB $1",
+      "(.*) - Chromium": "WEB $1",
+      "zsh (.*)": "ZSH $1"
+    }
   },
 
-  "network": {
-    "format-ethernet": "NET {ipaddr}",
-    "format-wifi": "WIFI {signalStrength}%",
-    "format-disconnected": "NET down",
-    "tooltip": true
+  "sway/workspaces": {
+    "all-outputs": true,
+    "disable-scroll": true,
+
+    "format": "{icon}",
+
+    "format-icons": {
+      "1": "一",
+      "2": "二",
+      "3": "三",
+      "4": "四",
+      "5": "五",
+      "6": "六",
+      "7": "七",
+      "8": "八",
+      "9": "九",
+      "10": "十",
+      "default": "・"
+    }
   },
+
+  "sway/mode": {
+    "format": "{}",
+    "tooltip": false
+  },
+
+  "tray": {
+    "icon-size": 14,
+    "spacing": 4
+  },
+
+
+  // ==========================================================
+  // Backlight
+  // ==========================================================
+
+{{ if or (eq .chezmoi.hostname "funkypunk") (eq .chezmoi.hostname "badapple") }}
+  "backlight": {
+    "format":
+      "BRT <span color='#888888'>{percent}%</span>",
+
+    "tooltip": false
+  },
+{{ end }}
+
+
+  // ==========================================================
+  // Audio
+  // ==========================================================
 
   "wireplumber": {
-    "format": "VOL {volume}%",
-    "format-muted": "MUTE",
+    "format":
+      "{icon} <span color='#888888'>{volume}%</span>",
+
+    "format-muted": " X ",
+
+    "format-icons": [
+      "+--",
+      "++-",
+      "+++"
+    ],
+
     "on-click": "pavucontrol"
   },
 
-  "clock": {
-    "format": "{:%d-%m-%Y  %H:%M}",
-    "tooltip-format": "<tt>{calendar}</tt>"
+
+  // ==========================================================
+  // Battery
+  // ==========================================================
+
+{{ if or (eq .chezmoi.hostname "funkypunk") (eq .chezmoi.hostname "badapple") }}
+  "battery": {
+    "interval": 30,
+
+    "states": {
+      "warning": 10,
+      "critical": 5
+    },
+
+    "format-time": "{H}:{m}",
+
+    "format":
+      "{icon} {time} <span color='#888888'>{capacity}%</span>",
+
+    "format-discharging":
+      "{icon} <span color='#ffd79a'>{capacity}%</span>",
+
+    "format-discharging-warning":
+      "{icon} <span color='#e0a868'>{capacity}%</span>",
+
+    "format-discharging-critical":
+      "{icon} <span color='#801900'>{capacity}%</span>",
+
+    "format-charging":
+      "CHG <span color='#dddddd'>{capacity}%</span> <span color='#888888'>@ {power:2.0f}W</span>",
+
+    "format-full":
+      "{icon} <span color='#888888'>{capacity}%</span>",
+
+    "format-not-charging":
+      "NOP <span color='#888888'>{capacity}%</span>",
+
+    "format-icons": [
+      "---",
+      "#--",
+      "##-",
+      "###",
+      "PWR"
+    ]
   },
+{{ end }}
+
+
+  // ==========================================================
+  // Weather
+  // ==========================================================
 
   "custom/weather": {
-  "exec": "curl -s 'https://wttr.in/Ankara?format=%c+%t'",
-  "interval": 1800,
-  "return-type": "text",
-  "tooltip": true
+    "exec":
+      "curl -fsS --max-time 5 'https://wttr.in/Ankara?format=%c+%t'",
+
+    "interval": 1800,
+
+    "format": "{}",
+
+    "tooltip": false
   },
-  "battery": {
-  "states": {
-    "warning": 30,
-    "critical": 15
+
+
+  // ==========================================================
+  // Clock
+  // ==========================================================
+
+  "group/clock": {
+    "orientation": "horizontal",
+
+    "modules": [
+      "clock#time",
+      "clock#date"
+    ],
+
+    "drawer": {
+      "transition-left-to-right": false,
+      "transition-duration": 500
+    }
   },
-  "format": "{capacity}% {icon}",
-  "format-charging": "{capacity}% 󰂄",
-  "format-plugged": "{capacity}% 󰚥",
-  "format-alt": "{time} {icon}",
-  "format-icons": [
-    "󰁺",
-    "󰁻",
-    "󰁼",
-    "󰁽",
-    "󰁾",
-    "󰁿",
-    "󰂀",
-    "󰂁",
-    "󰂂",
-    "󰁹"
-  ],
-  "tooltip": true
+
+  "clock#time": {
+    "interval": 60,
+
+    "format": "{:%H:%M}",
+
+    "tooltip": true,
+
+    "tooltip-format": "{tz_list}",
+
+    "timezones": [
+      "Europe/Istanbul",
+      "Etc/UTC"
+    ]
+  },
+
+  "clock#date": {
+    "interval": 60,
+
+    "format":
+      "<span color='#888888'> {:%d-%m-%Y}</span>",
+
+    "tooltip-format":
+      "<big>{:%B %Y}</big>\n<tt>{calendar}</tt>",
+
+    "calendar": {
+      "mode": "month",
+      "weeks-pos": "right"
+    }
   }
 }

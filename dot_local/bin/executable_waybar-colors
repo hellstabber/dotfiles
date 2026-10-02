@@ -1,0 +1,16 @@
+#!/bin/sh
+
+waybar_style="${XDG_CONFIG_HOME:-${HOME}/.config}/waybar/style.css"
+
+if [ -r "$waybar_style" ]; then
+    eval "$(
+        sed -n \
+        's/^@define-color[[:space:]]\{1,\}\([a-zA-Z_][a-zA-Z0-9_]*\)[[:space:]]\{1,\}\(#[0-9a-fA-F]\{3,8\}\)[[:space:]]*;.*/\1="\2"/p' \
+        "$waybar_style"
+    )"
+fi
+
+: "${text:=#dddddd}"
+: "${muted:=#888888}"
+: "${red:=#801900}"
+: "${white:=#ffffff}"

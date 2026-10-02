@@ -10,13 +10,16 @@ $character
 [directory]
 truncation_length = 3
 truncate_to_repo = false
+style = "bold #8f6aa8"
 
 [git_branch]
 format = " on [$symbol$branch]($style)"
+style = "#c98b5b"
 
 [git_status]
 format = "[$all_status$ahead_behind]($style)"
+style = "#7f7187"
 
 [character]
-success_symbol = "[❯](bold green)"
-error_symbol = "[❯](bold red)"
+success_symbol = "[❯](bold #8f6aa8)"
+error_symbol = "[❯](bold #8f2d3c)"

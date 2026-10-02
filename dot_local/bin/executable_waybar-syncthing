@@ -1,0 +1,41 @@
+#!/bin/sh
+
+. "$(dirname "$0")/waybar-colors"
+
+json="$(syncthing cli show connections 2>/dev/null)" || {
+    printf \
+        '{"text":"SYNC OFF","tooltip":"Syncthing unavailable","class":"disconnected"}\n'
+
+    exit 0
+}
+
+total="$(
+    printf '%s' "$json" |
+        jq '[.connections[]] | length'
+)"
+
+connected="$(
+    printf '%s' "$json" |
+        jq '[.connections[] | select(.connected == true)] | length'
+)"
+
+in_bytes="$(
+    printf '%s' "$json" |
+        jq '.total.inBytesTotal // 0'
+)"
+
+out_bytes="$(
+    printf '%s' "$json" |
+        jq '.total.outBytesTotal // 0'
+)"
+
+in_mb="$(eva -f 2 "$in_bytes / 1024 / 1024")"
+out_mb="$(eva -f 2 "$out_bytes / 1024 / 1024")"
+
+printf \
+    '{"text":"SYNC %s/<span color='\''%s'\''>%s</span>","tooltip":"Received: %s MB\\nSent: %s MB","class":"syncthing"}\n' \
+    "$connected" \
+    "$muted" \
+    "$total" \
+    "$in_mb" \
+    "$out_mb"
