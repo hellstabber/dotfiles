@@ -1,0 +1,189 @@
+packages:
+  official:
+    common:
+      # Base / system
+      - base-devel
+      - git
+      - curl
+      - wget
+      - rsync
+      - unzip
+      - 7zip
+      - man-db
+      - man-pages
+      - xdg-utils
+      - shared-mime-info
+      - flatpak
+
+      # Shell / development
+      - zsh
+      - mise
+      - rustup
+
+      # Sway / Wayland
+      - sway
+      - swaybg
+      - swayidle
+      - swaylock
+      - waybar
+      - fuzzel
+      - mako
+      - ghostty
+      - uwsm
+      - wl-clipboard
+      - grim
+      - slurp
+      - wf-recorder
+
+      # Portals
+      - xdg-desktop-portal
+      - xdg-desktop-portal-wlr
+      - xdg-desktop-portal-gtk
+
+      # Audio
+      - pipewire
+      - pipewire-pulse
+      - wireplumber
+      - pavucontrol
+      - playerctl
+      - helvum
+
+      # Network
+      - networkmanager
+      - opensnitch
+      - syncthing
+      - socat
+
+      # Browsers
+      - librewolf
+
+      # Communication
+      - signal-desktop
+      - thunderbird
+      - neomutt
+      - profanity
+      - newsboat
+
+      # Documents / reading
+      - libreoffice-fresh
+      - calibre
+      - zathura
+      - zathura-pdf-mupdf
+
+      # Notes / learning
+      - obsidian
+      - anki
+
+      # Graphics / media creation
+      - gimp
+      - inkscape
+      - obs-studio
+
+      # Editors
+      - emacs
+      - neovim
+      - helix
+
+      # Containers
+      - docker
+      - docker-compose
+      - podman
+      - buildah
+      - skopeo
+
+      # Passwords / secrets
+      - keepassxc
+      - gopass
+      - gnupg
+      - libsecret
+      - gnome-keyring
+      - seahorse
+
+      # Media
+      - mpv
+      - yt-dlp
+      - imv
+      - transmission-gtk
+
+      # CLI
+      - jq
+      - ripgrep
+      - fd
+      - fzf
+      - zoxide
+      - bat
+      - eza
+      - btop
+      - yazi
+      - gitui
+      - git-delta
+      - starship
+      - hyperfine
+      - hexyl
+      - lnav
+      - pastel
+      - tealdeer
+      - restic
+
+      # Laptop / hardware utilities
+      - brightnessctl
+
+      # Appearance
+      - wlsunset
+
+      # Fonts
+      - ttf-ibm-plex
+      - ttf-nerd-fonts-symbols-mono
+
+      # Login
+      - greetd
+      - greetd-tuigreet
+
+    # Desktop - GTX 1060 / Nouveau
+    molly:
+      - mesa
+      - lib32-mesa
+      - vulkan-nouveau
+      - lib32-vulkan-nouveau
+
+    # Dell G15 - Intel + RTX 4050
+    funkypunk:
+      - mesa
+      - lib32-mesa
+      - vulkan-intel
+      - lib32-vulkan-intel
+      - nvidia-open-dkms
+      - nvidia-utils
+      - lib32-nvidia-utils
+      - nvidia-prime
+
+    # MacBook Air 2017
+    badapple: []
+
+    # Only machines with gaming enabled
+    gaming:
+      - steam
+      - lutris
+      - wine
+      - wine-mono
+      - wine-gecko
+      - winetricks
+      - gamemode
+      - lib32-gamemode
+      - mangohud
+      - lib32-mangohud
+      - gamescope
+
+  aur:
+    common:
+      - ungoogled-chromium-bin
+      - vscodium-bin
+      - vesktop-bin
+      - ayugram-desktop-bin
+      - mepo
+
+flatpak:
+  common: []
+
+  gaming:
+    - com.usebottles.bottles

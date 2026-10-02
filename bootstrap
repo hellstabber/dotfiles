@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+REPO="$HOME/.local/share/chezmoi"
+HOST="$(hostnamectl --static)"
+
+case "$HOST" in
+    molly|funkypunk|badapple)
+        ;;
+    *)
+        echo "Unknown hostname: $HOST"
+        echo
+        echo "Expected one of:"
+        echo "  molly"
+        echo "  funkypunk"
+        echo "  badapple"
+        exit 1
+        ;;
+esac
+
+
+echo
+echo "=========================================="
+echo " Workstation bootstrap"
+echo " Host: $HOST"
+echo "=========================================="
+echo
+
+
+# ------------------------------------------------------------
+# Bootstrap dependencies
+# ------------------------------------------------------------
+
+echo "==> Installing bootstrap dependencies"
+
+sudo pacman -Syu --needed \
+    git \
+    base-devel \
+    ansible \
+    chezmoi
+
+
+# ------------------------------------------------------------
+# paru
+# ------------------------------------------------------------
+
+if ! command -v paru >/dev/null 2>&1; then
+
+    echo
+    echo "==> Installing paru"
+
+    tmpdir="$(mktemp -d)"
+
+    cleanup() {
+        rm -rf "$tmpdir"
+    }
+
+    trap cleanup EXIT
+
+    git clone \
+        https://aur.archlinux.org/paru.git \
+        "$tmpdir/paru"
+
+    (
+        cd "$tmpdir/paru"
+        makepkg -si --noconfirm
+    )
+
+fi
+
+
+# ------------------------------------------------------------
+# Ansible
+# ------------------------------------------------------------
+
+echo
+echo "==> Provisioning $HOST"
+
+cd "$REPO"
+
+ansible-playbook \
+    -i localhost, \
+    -c local \
+    -K \
+    ansible/workstation.yml
+
+
+# ------------------------------------------------------------
+# Dotfiles
+# ------------------------------------------------------------
+
+echo
+echo "==> Applying dotfiles"
+
+chezmoi apply
+
+
+# ------------------------------------------------------------
+# Final validation
+# ------------------------------------------------------------
+
+echo
+echo "==> Validating Sway"
+
+if sway --validate \
+    -c "$HOME/.config/sway/config"; then
+
+    echo "[OK] Sway config"
+
+else
+
+    echo "[WARN] Sway configuration has a problem."
+fi
+
+
+echo
+echo "=========================================="
+echo " Setup complete"
+echo "=========================================="
+echo
+echo "Hostname : $HOST"
+echo
+echo "Reboot recommended."
+echo
