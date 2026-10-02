@@ -504,8 +504,10 @@ bar {
 exec --no-startup-id mako
 
 # Color temperature
-exec --no-startup-id \
-    wlsunset -S 06:30 -s 19:30 -d 1800
+exec_always --no-startup-id sh -c \
+    'pkill -x wlsunset 2>/dev/null || true; \
+     exec wlsunset -S 06:30 -s 19:30 -d 1800'
+
 
 # Idle manager
 exec --no-startup-id swayidle -w \
