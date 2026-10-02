@@ -1,82 +1,135 @@
-;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+;;; config.el -*- lexical-binding: t; -*-
 
-;; Place your private configuration here! Remember, you do not need to run 'doom
-;; sync' after modifying this file!
+;; ------------------------------------------------------------
+;; General
+;; ------------------------------------------------------------
 
+(setq user-full-name "Eren Kaplan")
 
-;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets. It is optional.
-;; (setq user-full-name "John Doe"
-;;       user-mail-address "john@doe.com")
-
-;; Doom exposes five (optional) variables for controlling fonts in Doom:
-;;
-;; - `doom-font' -- the primary font to use
-;; - `doom-variable-pitch-font' -- a non-monospace font (where applicable)
-;; - `doom-big-font' -- used for `doom-big-font-mode'; use this for
-;;   presentations or streaming.
-;; - `doom-symbol-font' -- for symbols
-;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
-;;
-;; See 'C-h v doom-font' for documentation and more examples of what they
-;; accept. For example:
-;;
-;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
-;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
-;;
-;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
-;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
-;; refresh your font settings. If Emacs still can't find your font, it likely
-;; wasn't installed correctly. Font issues are rarely Doom issues!
-
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-one)
-;; Specify both a dark and light theme, like so and Doom will choose which one
-;; to load based on your system light/dark setting:
-;;
-;;   (setq doom-theme '(doom-one   . doom-one-light))   ; (DARK . LIGHT)
-;;
-;; If you want more pro-active theme switching based on OS light/dark mode, look
-;; up the `auto-dark' package.
+(setq display-line-numbers-type 'relative)
+(setq confirm-kill-emacs nil)
 
-;; This determines the style of line numbers in effect. If set to `nil', line
-;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type t)
-
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
+(setq-default
+ tab-width 4
+ indent-tabs-mode nil)
 
 
-;; Whenever you reconfigure a package, make sure to wrap your config in an
-;; `with-eval-after-load' block, otherwise Doom's defaults may override your
-;; settings. E.g.
-;;
-;;   (with-eval-after-load 'PACKAGE
-;;     (setq x y))
-;;
-;; The exceptions to this rule:
-;;
-;;   - Setting file/directory variables (like `org-directory')
-;;   - Setting variables which explicitly tell you to set them before their
-;;     package is loaded (see 'C-h v VARIABLE' to look them up).
-;;   - Setting doom variables (which start with 'doom-' or '+').
-;;
-;; Here are some additional functions/macros that will help you configure Doom.
-;;
-;; - `load!' for loading external *.el files relative to this one
-;; - `add-load-path!' for adding directories to the `load-path', relative to
-;;   this file. Emacs searches the `load-path' when you load packages with
-;;   `require' or `use-package'.
-;; - `map!' for binding new keys
-;;
-;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
-;; This will open documentation for it, including demos of how they are used.
-;; Alternatively, use `C-h o' to look up a symbol (functions, variables, faces,
-;; etc).
-;;
-;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
-;; they are implemented.
+;; ------------------------------------------------------------
+;; Font
+;; ------------------------------------------------------------
+
+(setq doom-font
+      (font-spec :family "monospace" :size 14))
+
+
+;; ------------------------------------------------------------
+;; UI
+;; ------------------------------------------------------------
+
+(setq doom-modeline-height 24)
+(setq fancy-splash-image nil)
+
+
+;; ------------------------------------------------------------
+;; Org
+;; ------------------------------------------------------------
+
+(setq org-directory "~/notes/org/")
+
+(after! org
+  (setq org-startup-indented t
+        org-hide-emphasis-markers t
+        org-pretty-entities t
+        org-log-done 'time
+
+        org-agenda-files
+        '("~/notes/org/agenda/")
+
+        org-default-notes-file
+        "~/notes/org/agenda/inbox.org"))
+
+;; Capture
+(after! org
+  (setq org-capture-templates
+        '(("t" "Task" entry
+           (file "~/notes/org/agenda/inbox.org")
+           "* TODO %?\n  %U\n")
+
+          ("n" "Quick note" entry
+           (file "~/notes/org/agenda/inbox.org")
+           "* %?\n  %U\n")
+
+          ("s" "Someday" entry
+           (file "~/notes/org/agenda/someday.org")
+           "* TODO %?\n  %U\n"))))
+
+;; ------------------------------------------------------------
+;; Org-roam
+;; ------------------------------------------------------------
+
+(after! org-roam
+  (setq org-roam-directory
+        (file-truename "~/notes/org/roam/"))
+
+  (setq org-roam-db-location
+        (expand-file-name "org-roam.db"
+                          org-roam-directory))
+
+  (org-roam-db-autosync-mode))
+
+(after! org-roam
+  (setq org-roam-capture-templates
+        '(("d" "default" plain
+           "%?"
+           :target
+           (file+head
+            "%<%Y%m%d%H%M%S>-${slug}.org"
+            "#+title: ${title}\n#+date: %U\n\n")
+           :unnarrowed t)
+
+          ("r" "reference" plain
+           "* Source\n%?\n\n* Notes\n"
+           :target
+           (file+head
+            "reference/%<%Y%m%d%H%M%S>-${slug}.org"
+            "#+title: ${title}\n#+date: %U\n#+filetags: :reference:\n\n")
+           :unnarrowed t))))
+
+
+
+;; ------------------------------------------------------------
+;; LSP
+;; ------------------------------------------------------------
+
+(after! lsp-mode
+  (setq lsp-enable-symbol-highlighting t
+        lsp-headerline-breadcrumb-enable t
+        lsp-modeline-code-actions-enable t))
+
+
+;; ------------------------------------------------------------
+;; Hugo
+;; ------------------------------------------------------------
+
+(use-package! easy-hugo
+  :commands (easy-hugo easy-hugo-menu)
+  :init
+  (setq easy-hugo-no-help t
+        easy-hugo-previewtime "300")
+  :config
+  (easy-hugo-enable-menu))
+
+(map! :leader
+      (:prefix ("o h" . "hugo")
+       :desc "Easy Hugo" "h" #'easy-hugo
+       :desc "Hugo menu" "m" #'easy-hugo-menu))
+
+
+;; ------------------------------------------------------------
+;; Magit
+;; ------------------------------------------------------------
+
+(map! :leader
+      :desc "Magit status"
+      "g g" #'magit-status)

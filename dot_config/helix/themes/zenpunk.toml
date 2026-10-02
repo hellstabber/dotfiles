@@ -1,0 +1,210 @@
+# Zenpunk — autumn-purple theme matching the Sway/Waybar palette.
+
+"ui.background" = { fg = "text", bg = "void" }
+"ui.background.separator" = { fg = "line" }
+"ui.window" = { fg = "line" }
+"ui.text" = { fg = "text" }
+"ui.text.focus" = { fg = "purple_lt", bg = "panel_hi" }
+"ui.text.inactive" = { fg = "dim" }
+"ui.text.info" = { fg = "purple_lt" }
+"ui.text.directory" = { fg = "purple" }
+
+"ui.gutter" = { fg = "dim", bg = "void" }
+"ui.gutter.selected" = { fg = "purple_lt", bg = "panel" }
+"ui.linenr" = { fg = "dim" }
+"ui.linenr.selected" = { fg = "purple_lt", modifiers = ["bold"] }
+
+"ui.cursor" = { fg = "void", bg = "muted" }
+"ui.cursor.normal" = { fg = "void", bg = "muted" }
+"ui.cursor.insert" = { fg = "void", bg = "amber" }
+"ui.cursor.select" = { fg = "void", bg = "purple_lt" }
+"ui.cursor.secondary" = { fg = "void", bg = "muted" }
+"ui.cursor.primary" = { fg = "void", bg = "purple_lt" }
+"ui.cursor.primary.normal" = { fg = "void", bg = "purple_lt" }
+"ui.cursor.primary.insert" = { fg = "void", bg = "amber" }
+"ui.cursor.primary.select" = { fg = "void", bg = "purple" }
+"ui.cursor.match" = { fg = "amber_lt", bg = "amber_dk" }
+
+"ui.selection" = { bg = "line" }
+"ui.selection.primary" = { bg = "line_hi" }
+"ui.highlight" = { bg = "panel_hi" }
+"ui.highlight.frameline" = { bg = "panel_hi" }
+
+"ui.cursorline.primary" = { bg = "panel" }
+"ui.cursorline.secondary" = { bg = "panel" }
+
+"ui.statusline" = { fg = "muted", bg = "panel" }
+"ui.statusline.inactive" = { fg = "dim", bg = "panel" }
+"ui.statusline.normal" = { fg = "void", bg = "purple", modifiers = ["bold"] }
+"ui.statusline.insert" = { fg = "void", bg = "amber", modifiers = ["bold"] }
+"ui.statusline.select" = { fg = "void", bg = "red", modifiers = ["bold"] }
+"ui.statusline.separator" = { fg = "line_hi", bg = "panel" }
+
+"ui.bufferline" = { fg = "muted", bg = "panel" }
+"ui.bufferline.active" = { fg = "purple_lt", bg = "panel_hi", modifiers = ["bold"] }
+"ui.bufferline.background" = { bg = "panel" }
+
+"ui.popup" = { fg = "text", bg = "panel" }
+"ui.popup.info" = { fg = "muted", bg = "panel" }
+"ui.help" = { fg = "text", bg = "panel" }
+"ui.menu" = { fg = "text", bg = "panel" }
+"ui.menu.selected" = { fg = "void", bg = "purple" }
+"ui.menu.scroll" = { fg = "line_hi", bg = "panel" }
+"ui.picker.header" = { fg = "muted", bg = "panel_hi" }
+"ui.picker.header.column" = { fg = "muted" }
+"ui.picker.header.column.active" = { fg = "purple_lt", modifiers = ["bold"] }
+
+"ui.virtual" = { fg = "dim" }
+"ui.virtual.ruler" = { bg = "panel_hi" }
+"ui.virtual.whitespace" = { fg = "line_hi" }
+"ui.virtual.indent-guide" = { fg = "line" }
+"ui.virtual.wrap" = { fg = "dim" }
+"ui.virtual.inlay-hint" = { fg = "dim", bg = "panel" }
+"ui.virtual.inlay-hint.parameter" = { fg = "muted", bg = "panel" }
+"ui.virtual.inlay-hint.type" = { fg = "purple", bg = "panel" }
+"ui.virtual.jump-label" = { fg = "void", bg = "amber_lt", modifiers = ["bold"] }
+
+"error" = { fg = "red_lt" }
+"warning" = { fg = "amber" }
+"info" = { fg = "purple_lt" }
+"hint" = { fg = "muted" }
+"debug" = { fg = "purple" }
+
+"diagnostic" = { underline = { color = "muted", style = "dotted" } }
+"diagnostic.error" = { underline = { color = "red_lt", style = "curl" } }
+"diagnostic.warning" = { underline = { color = "amber", style = "curl" } }
+"diagnostic.info" = { underline = { color = "purple_lt", style = "dotted" } }
+"diagnostic.hint" = { underline = { color = "muted", style = "dotted" } }
+"diagnostic.unnecessary" = { fg = "dim", modifiers = ["dim"] }
+"diagnostic.deprecated" = { modifiers = ["crossed_out"] }
+
+"diff.plus" = { fg = "purple_lt" }
+"diff.minus" = { fg = "red_lt" }
+"diff.delta" = { fg = "amber" }
+"diff.delta.moved" = { fg = "purple" }
+"diff.delta.conflict" = { fg = "red_lt", modifiers = ["bold"] }
+"diff.plus.gutter" = { fg = "purple" }
+"diff.minus.gutter" = { fg = "red" }
+"diff.delta.gutter" = { fg = "amber_dk" }
+
+"comment" = { fg = "dim", modifiers = ["italic"] }
+"comment.line" = { fg = "dim", modifiers = ["italic"] }
+"comment.block" = { fg = "dim", modifiers = ["italic"] }
+"comment.line.documentation" = { fg = "muted", modifiers = ["italic"] }
+"comment.block.documentation" = { fg = "muted", modifiers = ["italic"] }
+
+"variable" = { fg = "text" }
+"variable.parameter" = { fg = "text" }
+"variable.other.member" = { fg = "purple_lt" }
+"variable.builtin" = { fg = "purple_lt", modifiers = ["italic"] }
+
+"function" = { fg = "purple_lt" }
+"function.call" = { fg = "purple_lt" }
+"function.method" = { fg = "purple_lt" }
+"function.declaration" = { fg = "purple_lt" }
+"function.builtin" = { fg = "purple" }
+"function.macro" = { fg = "amber" }
+"function.special" = { fg = "amber" }
+
+"constructor" = { fg = "purple_lt" }
+"type" = { fg = "amber" }
+"type.builtin" = { fg = "amber" }
+"type.definition" = { fg = "amber" }
+"type.enum" = { fg = "amber" }
+"type.enum.variant" = { fg = "amber_lt" }
+"type.parameter" = { fg = "text" }
+
+"namespace" = { fg = "purple", modifiers = ["italic"] }
+"module" = { fg = "purple", modifiers = ["italic"] }
+"label" = { fg = "amber" }
+"tag" = { fg = "purple" }
+"attribute" = { fg = "purple_lt" }
+"special" = { fg = "amber_lt" }
+
+"string" = { fg = "amber_lt" }
+"string.regexp" = { fg = "purple_lt" }
+"string.special" = { fg = "purple_lt" }
+"string.special.path" = { fg = "purple_lt" }
+"string.special.symbol" = { fg = "purple_lt" }
+"string.special.url" = { fg = "purple_lt", underline = { style = "line" } }
+
+"constant" = { fg = "amber" }
+"constant.numeric" = { fg = "purple_lt" }
+"constant.numeric.integer" = { fg = "purple_lt" }
+"constant.numeric.float" = { fg = "purple_lt" }
+"constant.character" = { fg = "amber_lt" }
+"constant.character.escape" = { fg = "red_lt" }
+"constant.builtin" = { fg = "amber" }
+"constant.builtin.boolean" = { fg = "amber" }
+
+"keyword" = { fg = "purple_lt" }
+"keyword.function" = { fg = "purple_lt" }
+"keyword.operator" = { fg = "purple_lt" }
+"keyword.control" = { fg = "amber" }
+"keyword.control.conditional" = { fg = "amber" }
+"keyword.control.repeat" = { fg = "amber" }
+"keyword.control.return" = { fg = "amber" }
+"keyword.control.exception" = { fg = "red_lt" }
+"keyword.control.import" = { fg = "purple" }
+"keyword.storage" = { fg = "purple" }
+"keyword.storage.type" = { fg = "purple" }
+"keyword.storage.modifier" = { fg = "purple" }
+"keyword.directive" = { fg = "amber" }
+
+"operator" = { fg = "muted" }
+"punctuation" = { fg = "muted" }
+"punctuation.delimiter" = { fg = "muted" }
+"punctuation.bracket" = { fg = "muted" }
+"punctuation.special" = { fg = "amber" }
+
+"markup.heading" = { fg = "purple_lt", modifiers = ["bold"] }
+"markup.heading.marker" = { fg = "dim" }
+"markup.heading.1" = { fg = "purple_lt", modifiers = ["bold"] }
+"markup.heading.2" = { fg = "amber", modifiers = ["bold"] }
+"markup.heading.3" = { fg = "purple", modifiers = ["bold"] }
+"markup.heading.4" = { fg = "amber_lt", modifiers = ["bold"] }
+"markup.heading.5" = { fg = "muted", modifiers = ["bold"] }
+"markup.heading.6" = { fg = "dim", modifiers = ["bold"] }
+
+"markup.list" = { fg = "amber" }
+"markup.list.numbered" = { fg = "amber" }
+"markup.list.unnumbered" = { fg = "amber" }
+"markup.list.checked" = { fg = "purple_lt" }
+"markup.list.unchecked" = { fg = "muted" }
+
+"markup.bold" = { fg = "purple_lt", modifiers = ["bold"] }
+"markup.italic" = { fg = "amber_lt", modifiers = ["italic"] }
+"markup.strikethrough" = { fg = "dim", modifiers = ["crossed_out"] }
+"markup.quote" = { fg = "muted", modifiers = ["italic"] }
+
+"markup.link" = { fg = "purple_lt" }
+"markup.link.label" = { fg = "amber" }
+"markup.link.text" = { fg = "purple" }
+"markup.link.url" = { fg = "purple_lt", underline = { style = "line" } }
+
+"markup.raw" = { fg = "amber_lt" }
+"markup.raw.inline" = { fg = "amber_lt" }
+"markup.raw.block" = { fg = "amber_lt" }
+"markup.normal" = { fg = "text" }
+
+[palette]
+void = "#0b090d"
+panel = "#17111d"
+panel_hi = "#211827"
+line = "#2a2030"
+line_hi = "#3a2d42"
+
+purple_dk = "#684c7a"
+purple = "#8f6aa8"
+purple_lt = "#b89ad0"
+
+amber_dk = "#8c5e3c"
+amber = "#c98b5b"
+amber_lt = "#e0ad83"
+
+red = "#8f2d3c"
+red_lt = "#c45a6a"
+
+text = "#e6dfe8"
+muted = "#7f7187"
+dim = "#54495a"

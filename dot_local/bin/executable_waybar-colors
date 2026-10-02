@@ -10,7 +10,7 @@ if [ -r "$waybar_style" ]; then
     )"
 fi
 
-: "${text:=#dddddd}"
-: "${muted:=#888888}"
-: "${red:=#801900}"
+: "${text:=#e6dfe8}"
+: "${muted:=#7f7187}"
+: "${red:=#8f2d3c}"
 : "${white:=#ffffff}"

@@ -73,7 +73,7 @@
     "family": "ipv4",
 
     "format":
-      "BWD {bandwidthDownBytes} <span color='#888888'>{bandwidthUpBytes}</span>",
+      "BWD {bandwidthDownBytes} <span color='#7f7187'>{bandwidthUpBytes}</span>",
 
     "tooltip-format": "{ifname}"
   },
@@ -84,10 +84,10 @@
     "format": "{ifname}",
 
     "format-wifi":
-      "WiFi {essid} <span color='#888888'>{signalStrength}%</span>",
+      "WiFi {essid} <span color='#7f7187'>{signalStrength}%</span>",
 
     "format-ethernet":
-      "ETH {ipaddr}/<span color='#888888'>{cidr}</span>",
+      "ETH {ipaddr}/<span color='#7f7187'>{cidr}</span>",
 
     "format-disconnected": "OFF",
 
@@ -98,7 +98,7 @@
   },
 
   "custom/vpn": {
-    "format": "VPN <span color='#888888'>{}</span>",
+    "format": "VPN <span color='#7f7187'>{}</span>",
     "return-type": "json",
 
     "exec": "~/.local/bin/waybar-vpn current",
@@ -134,7 +134,7 @@
     "interval": 30,
 
     "format":
-      "CPU <span color='#888888'>{usage}%</span>",
+      "CPU <span color='#7f7187'>{usage}%</span>",
 
     "states": {
       "warning": 70,
@@ -146,7 +146,7 @@
     "interval": 60,
 
     "format":
-      "MEM {used:3.1f}GiB/<span color='#888888'>{total:3.1f}GiB</span>"
+      "MEM {used:3.1f}GiB/<span color='#7f7187'>{total:3.1f}GiB</span>"
   },
 
   "disk#root": {
@@ -154,7 +154,7 @@
     "path": "/",
 
     "format":
-      "SSD {used}/<span color='#888888'>{total}</span>"
+      "SSD {used}/<span color='#7f7187'>{total}</span>"
   },
 
 
@@ -215,7 +215,6 @@
     "max-length": 160,
 
     "rewrite": {
-      "(.*) — Mozilla Firefox": "WEB $1",
       "(.*) — LibreWolf": "WEB $1",
       "(.*) - Chromium": "WEB $1",
       "zsh (.*)": "ZSH $1"
@@ -261,7 +260,7 @@
 {{ if or (eq .chezmoi.hostname "funkypunk") (eq .chezmoi.hostname "badapple") }}
   "backlight": {
     "format":
-      "BRT <span color='#888888'>{percent}%</span>",
+      "BRT <span color='#7f7187'>{percent}%</span>",
 
     "tooltip": false
   },
@@ -274,7 +273,7 @@
 
   "wireplumber": {
     "format":
-      "{icon} <span color='#888888'>{volume}%</span>",
+      "{icon} <span color='#7f7187'>{volume}%</span>",
 
     "format-muted": " X ",
 
@@ -304,25 +303,25 @@
     "format-time": "{H}:{m}",
 
     "format":
-      "{icon} {time} <span color='#888888'>{capacity}%</span>",
+      "{icon} {time} <span color='#7f7187'>{capacity}%</span>",
 
     "format-discharging":
-      "{icon} <span color='#ffd79a'>{capacity}%</span>",
+      "{icon} <span color='#b89ad0'>{capacity}%</span>",
 
     "format-discharging-warning":
-      "{icon} <span color='#e0a868'>{capacity}%</span>",
+      "{icon} <span color='#c98b5b'>{capacity}%</span>",
 
     "format-discharging-critical":
-      "{icon} <span color='#801900'>{capacity}%</span>",
+      "{icon} <span color='#8f2d3c'>{capacity}%</span>",
 
     "format-charging":
-      "CHG <span color='#dddddd'>{capacity}%</span> <span color='#888888'>@ {power:2.0f}W</span>",
+      "CHG <span color='#e6dfe8'>{capacity}%</span> <span color='#7f7187'>@ {power:2.0f}W</span>",
 
     "format-full":
-      "{icon} <span color='#888888'>{capacity}%</span>",
+      "{icon} <span color='#7f7187'>{capacity}%</span>",
 
     "format-not-charging":
-      "NOP <span color='#888888'>{capacity}%</span>",
+      "NOP <span color='#7f7187'>{capacity}%</span>",
 
     "format-icons": [
       "---",
@@ -388,7 +387,7 @@
     "interval": 60,
 
     "format":
-      "<span color='#888888'> {:%d-%m-%Y}</span>",
+      "<span color='#7f7187'> {:%d-%m-%Y}</span>",
 
     "tooltip-format":
       "<big>{:%B %Y}</big>\n<tt>{calendar}</tt>",

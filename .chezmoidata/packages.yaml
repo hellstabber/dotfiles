@@ -34,6 +34,8 @@ packages:
       - grim
       - slurp
       - wf-recorder
+      - libnotify
+      - wev
 
       # Portals
       - xdg-desktop-portal
@@ -106,6 +108,7 @@ packages:
       - transmission-gtk
 
       # CLI
+      - eva
       - jq
       - ripgrep
       - fd

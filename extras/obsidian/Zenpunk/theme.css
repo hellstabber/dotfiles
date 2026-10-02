@@ -1,0 +1,181 @@
+/*
+Zenpunk — Obsidian theme
+Palette shared with the Sway/Waybar/VSCodium/Helix setup.
+*/
+
+.theme-dark,
+.theme-light {
+  --font-interface: "IBM Plex Mono", monospace;
+  --font-text: "IBM Plex Mono", monospace;
+  --font-monospace: "IBM Plex Mono", monospace;
+
+  --background-primary: #0b090d;
+  --background-primary-alt: #17111d;
+  --background-secondary: #17111d;
+  --background-secondary-alt: #0b090d;
+
+  --background-modifier-border: #2a2030;
+  --background-modifier-border-hover: #54495a;
+  --background-modifier-hover: #17111d;
+  --background-modifier-active-hover: #2a2030;
+
+  --text-normal: #e6dfe8;
+  --text-muted: #7f7187;
+  --text-faint: #54495a;
+  --text-on-accent: #0b090d;
+  --text-accent: #b89ad0;
+  --text-accent-hover: #c98b5b;
+  --text-error: #c45a6a;
+
+  --interactive-normal: #17111d;
+  --interactive-hover: #2a2030;
+  --interactive-accent: #8f6aa8;
+  --interactive-accent-hover: #b89ad0;
+
+  --scrollbar-bg: #0b090d;
+  --scrollbar-thumb-bg: #2a2030;
+  --scrollbar-active-thumb-bg: #54495a;
+
+  --tag-color: #b89ad0;
+  --tag-background: #17111d;
+  --tag-background-hover: #2a2030;
+
+  --link-color: #b89ad0;
+  --link-color-hover: #c98b5b;
+  --link-external-color: #c98b5b;
+  --link-unresolved-color: #7f7187;
+
+  --code-normal: #e0ad83;
+  --code-background: #17111d;
+
+  --blockquote-border-color: #8f6aa8;
+  --blockquote-color: #7f7187;
+
+  --nav-item-color: #7f7187;
+  --nav-item-color-hover: #e6dfe8;
+  --nav-item-color-active: #b89ad0;
+  --nav-item-background-hover: #17111d;
+  --nav-item-background-active: #17111d;
+
+  --titlebar-background: #0b090d;
+  --titlebar-background-focused: #0b090d;
+
+  --tab-container-background: #0b090d;
+  --tab-text-color: #7f7187;
+  --tab-text-color-active: #b89ad0;
+  --tab-outline-color: #2a2030;
+
+  --divider-color: #2a2030;
+  --divider-color-hover: #8f6aa8;
+
+  --checkbox-color: #8f6aa8;
+  --checkbox-color-hover: #b89ad0;
+
+  --cursor: #b89ad0;
+}
+
+body {
+  --radius-s: 0px;
+  --radius-m: 0px;
+  --radius-l: 0px;
+  --input-radius: 0px;
+  --button-radius: 0px;
+  --tab-radius-active: 0px;
+  --checkbox-radius: 0px;
+}
+
+::selection {
+  background: #3a2d42;
+  color: #e6dfe8;
+}
+
+.workspace-tab-header.is-active {
+  box-shadow: inset 0 -2px 0 #8f6aa8;
+}
+
+.workspace-leaf-content[data-type="markdown"] .view-header {
+  border-bottom: 1px solid #2a2030;
+}
+
+.markdown-rendered h1,
+.cm-header-1 {
+  color: #b89ad0;
+}
+
+.markdown-rendered h2,
+.cm-header-2 {
+  color: #c98b5b;
+}
+
+.markdown-rendered h3,
+.cm-header-3 {
+  color: #8f6aa8;
+}
+
+.markdown-rendered h4,
+.cm-header-4 {
+  color: #e0ad83;
+}
+
+.markdown-rendered h5,
+.cm-header-5 {
+  color: #7f7187;
+}
+
+.markdown-rendered h6,
+.cm-header-6 {
+  color: #54495a;
+}
+
+.markdown-rendered code,
+.cm-inline-code {
+  color: #e0ad83;
+  background: #17111d;
+}
+
+.markdown-rendered pre,
+.HyperMD-codeblock {
+  border: 1px solid #2a2030;
+  background: #17111d;
+}
+
+.markdown-rendered blockquote {
+  border-inline-start: 2px solid #8f6aa8;
+  color: #7f7187;
+}
+
+.markdown-rendered a,
+.cm-hmd-internal-link,
+.cm-link {
+  color: #b89ad0;
+}
+
+.markdown-rendered hr {
+  border-color: #2a2030;
+}
+
+.markdown-rendered table {
+  border-collapse: collapse;
+}
+
+.markdown-rendered th,
+.markdown-rendered td {
+  border: 1px solid #2a2030;
+}
+
+.markdown-rendered th {
+  color: #b89ad0;
+  background: #17111d;
+}
+
+.nav-file-title.is-active,
+.nav-folder-title.is-active {
+  color: #b89ad0;
+  background: #17111d;
+}
+
+.status-bar {
+  color: #7f7187;
+  background: #17111d;
+  border-top: 1px solid #2a2030;
+}

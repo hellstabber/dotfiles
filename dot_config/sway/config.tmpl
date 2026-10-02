@@ -40,7 +40,6 @@ client.focused_tab_title  $panel    $panel    $muted
 client.urgent             $red      $red      $text      $amber      $red
 client.placeholder        $black    $black    $text      $text       $black
 
-
 font pango:IBM Plex Mono 10
 
 default_border pixel 2
@@ -100,7 +99,7 @@ output HDMI-A-1 {
 # ============================================================
 
 # Sway keybinding help
-bindsym $mod+Shift+slash exec ~/.local/bin/sway-help
+bindsym $mod+Ctrl+h exec ~/.local/bin/sway-help
 
 # Terminal
 bindsym $mod+Return exec $term
@@ -109,18 +108,18 @@ bindsym $mod+Return exec $term
 bindsym $mod+Space exec $menu
 
 # Last notification
-bindsym $mod+grave exec makoctl restore
+bindsym $mod+Ctrl+n exec makoctl restore
 
 # Kill window
 bindsym $mod+Escape kill
 
 # Lock
-bindsym $mod+Ctrl+q exec swaylock -f
+bindsym $mod+Ctrl+l exec swaylock
 
-# Reload
+# Reload Sway
 bindsym $mod+Shift+c reload
 
-# Exit
+# Exit Sway
 bindsym $mod+Shift+e exec swaynag \
     -t warning \
     -m 'EXIT SWAY SESSION' \
@@ -128,68 +127,116 @@ bindsym $mod+Shift+e exec swaynag \
 
 
 # ============================================================
-# Media
+# Audio / media
 # ============================================================
 
-# Actual media/Fn keys
+# Mute audio
 bindsym XF86AudioMute exec \
     wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
 
+# Lower volume
 bindsym XF86AudioLowerVolume exec \
     wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
 
+# Raise volume
 bindsym XF86AudioRaiseVolume exec \
     wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
 
+# Previous track
 bindsym XF86AudioPrev exec playerctl previous
+
+# Play / pause
 bindsym XF86AudioPlay exec playerctl play-pause
+
+# Next track
 bindsym XF86AudioNext exec playerctl next
 
+
+# ============================================================
+# Laptop brightness
+# ============================================================
+
+{{ if or (eq .chezmoi.hostname "funkypunk") (eq .chezmoi.hostname "badapple") }}
+
+# Lower display brightness
 bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+
+# Raise display brightness
 bindsym XF86MonBrightnessUp exec brightnessctl set +5%
 
+{{ end }}
+
+
+# ============================================================
+# MacBook keyboard backlight
+# ============================================================
+
+{{ if eq .chezmoi.hostname "badapple" }}
+
+# Lower keyboard backlight
 bindsym XF86KbdBrightnessDown exec \
     brightnessctl --device='smc::kbd_backlight' set 10%-
 
+# Raise keyboard backlight
 bindsym XF86KbdBrightnessUp exec \
     brightnessctl --device='smc::kbd_backlight' set +10%
 
+{{ end }}
 
-# mrusme-style Mod + function keys
+
+# ============================================================
+# Mod + function keys
+# ============================================================
+
+# Mute audio
 bindsym $mod+F1 exec \
     wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
 
+# Lower volume
 bindsym $mod+F2 exec \
     wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
 
+# Raise volume
 bindsym $mod+F3 exec \
     wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
 
+# Previous track
 bindsym $mod+F5 exec playerctl previous
+
+# Play / pause
 bindsym $mod+F6 exec playerctl play-pause
+
+# Next track
 bindsym $mod+F7 exec playerctl next
 
+{{ if or (eq .chezmoi.hostname "funkypunk") (eq .chezmoi.hostname "badapple") }}
+
+# Lower display brightness
 bindsym $mod+F8 exec brightnessctl set 5%-
+
+# Raise display brightness
 bindsym $mod+F9 exec brightnessctl set +5%
+
+{{ end }}
 
 
 # ============================================================
 # Screenshots
 # ============================================================
 
-# Whole screen
+# Screenshot whole screen
 bindsym Print exec sh -c \
     'mkdir -p "$HOME/Pictures/Screenshots"; \
      grim "$HOME/Pictures/Screenshots/$(date +screenshot-%Y-%m-%d-%H%M%S).png"'
 
-# Region -> file
+# Screenshot selected region
 bindsym Shift+Print exec sh -c \
     'mkdir -p "$HOME/Pictures/Screenshots"; \
      geometry="$(slurp)" && \
      grim -g "$geometry" \
      "$HOME/Pictures/Screenshots/$(date +screenshot-%Y-%m-%d-%H%M%S).png"'
 
-# Region -> clipboard
+# Screenshot selected region to clipboard
 bindsym $mod+Print exec sh -c \
     'geometry="$(slurp)" && grim -g "$geometry" - | wl-copy'
 
@@ -198,16 +245,31 @@ bindsym $mod+Print exec sh -c \
 # Focus
 # ============================================================
 
+# Focus left
 bindsym $mod+$left focus left
+
+# Focus down
 bindsym $mod+$down focus down
+
+# Focus up
 bindsym $mod+$up focus up
+
+# Focus right
 bindsym $mod+$right focus right
 
+# Focus left with arrow
 bindsym $mod+Left focus left
+
+# Focus down with arrow
 bindsym $mod+Down focus down
+
+# Focus up with arrow
 bindsym $mod+Up focus up
+
+# Focus right with arrow
 bindsym $mod+Right focus right
 
+# Focus parent
 bindsym $mod+Ctrl+p focus parent
 
 
@@ -215,14 +277,28 @@ bindsym $mod+Ctrl+p focus parent
 # Move windows
 # ============================================================
 
+# Move window left
 bindsym $mod+Shift+$left move left
+
+# Move window down
 bindsym $mod+Shift+$down move down
+
+# Move window up
 bindsym $mod+Shift+$up move up
+
+# Move window right
 bindsym $mod+Shift+$right move right
 
+# Move window left with arrow
 bindsym $mod+Shift+Left move left
+
+# Move window down with arrow
 bindsym $mod+Shift+Down move down
+
+# Move window up with arrow
 bindsym $mod+Shift+Up move up
+
+# Move window right with arrow
 bindsym $mod+Shift+Right move right
 
 
@@ -241,64 +317,100 @@ set $ws8 8
 set $ws9 9
 set $ws10 10
 
+# Workspace 1
 bindsym $mod+1 workspace number $ws1
+
+# Workspace 2
 bindsym $mod+2 workspace number $ws2
+
+# Workspace 3
 bindsym $mod+3 workspace number $ws3
+
+# Workspace 4
 bindsym $mod+4 workspace number $ws4
+
+# Workspace 5
 bindsym $mod+5 workspace number $ws5
+
+# Workspace 6
 bindsym $mod+6 workspace number $ws6
+
+# Workspace 7
 bindsym $mod+7 workspace number $ws7
+
+# Workspace 8
 bindsym $mod+8 workspace number $ws8
+
+# Workspace 9
 bindsym $mod+9 workspace number $ws9
+
+# Workspace 10
 bindsym $mod+0 workspace number $ws10
 
+
+# Move window to workspace 1
 bindsym $mod+Shift+1 move container to workspace number $ws1
+
+# Move window to workspace 2
 bindsym $mod+Shift+2 move container to workspace number $ws2
+
+# Move window to workspace 3
 bindsym $mod+Shift+3 move container to workspace number $ws3
+
+# Move window to workspace 4
 bindsym $mod+Shift+4 move container to workspace number $ws4
+
+# Move window to workspace 5
 bindsym $mod+Shift+5 move container to workspace number $ws5
+
+# Move window to workspace 6
 bindsym $mod+Shift+6 move container to workspace number $ws6
+
+# Move window to workspace 7
 bindsym $mod+Shift+7 move container to workspace number $ws7
+
+# Move window to workspace 8
 bindsym $mod+Shift+8 move container to workspace number $ws8
+
+# Move window to workspace 9
 bindsym $mod+Shift+9 move container to workspace number $ws9
+
+# Move window to workspace 10
 bindsym $mod+Shift+0 move container to workspace number $ws10
 
-bindsym $mod+bracketleft workspace prev
-bindsym $mod+bracketright workspace next
+# Previous workspace
+bindsym $mod+Ctrl+Left workspace prev
 
-
-# ============================================================
-# Workspace outputs
-# ============================================================
-
-{{ if eq .chezmoi.hostname "molly" }}
-workspace 1 output DP-1
-workspace 2 output HDMI-A-1
-workspace 3 output DP-1
-workspace 4 output HDMI-A-1
-workspace 5 output DP-1
-workspace 6 output HDMI-A-1
-workspace 7 output DP-1
-workspace 8 output HDMI-A-1
-workspace 9 output DP-1
-workspace 10 output HDMI-A-1
-{{ end }}
+# Next workspace
+bindsym $mod+Ctrl+Right workspace next
 
 
 # ============================================================
 # Layout
 # ============================================================
 
+# Split horizontally
+bindsym $mod+b splith
+
+# Split vertically
+bindsym $mod+v splitv
+
+# Stacking layout
 bindsym $mod+s layout stacking
+
+# Tabbed layout
 bindsym $mod+t layout tabbed
+
+# Toggle split layout
 bindsym $mod+Shift+s layout toggle split
 
-bindsym $mod+equal splith
-bindsym $mod+minus splitv
-
+# Toggle floating
 bindsym $mod+Shift+z floating toggle
+
+# Toggle focus between tiling and floating
 bindsym $mod+Tab focus mode_toggle
 
+# Toggle fullscreen
 bindsym $mod+z fullscreen toggle
 
 floating_modifier $mod normal
@@ -308,8 +420,11 @@ floating_modifier $mod normal
 # Scratchpad
 # ============================================================
 
-bindsym $mod+Ctrl+grave scratchpad show
-bindsym $mod+Ctrl+Shift+grave move scratchpad
+# Show scratchpad
+bindsym $mod+Ctrl+s scratchpad show
+
+# Move window to scratchpad
+bindsym $mod+Ctrl+Shift+s move scratchpad
 
 
 # ============================================================
@@ -317,21 +432,41 @@ bindsym $mod+Ctrl+Shift+grave move scratchpad
 # ============================================================
 
 mode "resize" {
+
+    # Shrink width
     bindsym $left resize shrink width 10px
+
+    # Grow height
     bindsym $down resize grow height 10px
+
+    # Shrink height
     bindsym $up resize shrink height 10px
+
+    # Grow width
     bindsym $right resize grow width 10px
 
+    # Shrink width with arrow
     bindsym Left resize shrink width 10px
+
+    # Grow height with arrow
     bindsym Down resize grow height 10px
+
+    # Shrink height with arrow
     bindsym Up resize shrink height 10px
+
+    # Grow width with arrow
     bindsym Right resize grow width 10px
 
+    # Leave resize mode
     bindsym Escape mode "default"
+
+    # Leave resize mode
     bindsym Return mode "default"
 }
 
+# Enter resize mode
 bindsym $mod+r mode "resize"
+
 
 
 # ============================================================
@@ -341,12 +476,10 @@ bindsym $mod+r mode "resize"
 for_window [app_id="pavucontrol"] floating enable
 for_window [app_id="org.gnupg.pinentry-qt"] floating enable
 for_window [app_id="keepassxc"] floating enable
+for_window [title="^Extension: .*" app_id="librewolf"] floating enable
 
 for_window [title="^Open File$"] floating enable
 for_window [title="^Open Files$"] floating enable
-
-for_window [title="Firefox - Sharing Indicator"] floating enable
-for_window [title="^Extension: .*" app_id="firefox"] floating enable
 
 for_window [shell="xwayland"] \
     title_format "<span>[X11] %title</span>"
@@ -370,22 +503,17 @@ bar {
 # Notifications
 exec --no-startup-id mako
 
-# GNOME Secret Service
-exec --no-startup-id \
-    gnome-keyring-daemon --start --components=secrets
-
-
 # Color temperature
 exec --no-startup-id \
     wlsunset -S 06:30 -s 19:30 -d 1800
 
 # Idle manager
 exec --no-startup-id swayidle -w \
-    timeout 600 'swaylock -f' \
+    timeout 600 'swaylock' \
     timeout 900 'swaymsg "output * power off"' \
         resume 'swaymsg "output * power on"' \
-    before-sleep 'swaylock -f' \
-    lock 'swaylock -f'
+    before-sleep 'swaylock' \
+    lock 'swaylock'
 
 
 # ============================================================

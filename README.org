@@ -2,17 +2,29 @@
   managed by [[https://chezmoi.io][Chezmoi]]
 
 ** Goals
-   - Distraction-free CLI environment
-   - Efficient reading/writing and note-taking with Emacs
-   - Consistent experience across Arch Linux and macOS
+   - Minimal and distraction-free Linux environment
+   - Reproducible workstation setup
+   - Consistent configuration across my machines
 
-** Tools
-   | Category           | Application  | Config                  |
-   |--------------------|--------------|-------------------------|
-   | Shell              | Zsh + OMZ    | dot_zshrc               |
-   | Terminal           | Ghostty      | dot_config/ghostty      |
-   | Window Manager     | Sway         | dot_config/sway         |
-   | Status Bar         | sway-bar     | dot_config/sway/scripts |
-   | Text Editor        | Neovim       | dot_config/nvim         |
-   | Text Editor        | Doom Emacs   | dot_config/doom         |
-   | Notifications      | Dunst        | dot_config/dunst        |
+** Setup
+   - Arch Linux
+   - Sway
+   - Waybar
+   - Fuzzel
+   - Mako
+   - Ghostty
+   - Zsh
+   - Helix
+   - Emacs
+   - LibreWolf
+
+** Provisioning
+   - Ansible for packages and services
+   - Chezmoi for dotfiles
+
+** Install
+#+begin_src sh
+chezmoi init hellstabber/dotfiles
+cd ~/.local/share/chezmoi
+./bootstrap
+#+end_src
