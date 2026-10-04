@@ -1,3 +1,10 @@
 ansible/
 ansible/**
 bootstrap
+README.org
+LICENSE
+extras/
+extras/**
+tests/
+tests/**
+.config/sway/config.bak

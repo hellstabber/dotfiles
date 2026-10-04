@@ -1,125 +1,102 @@
 #!/usr/bin/env bash
-
-set -euo pipefail
-
-REPO="$HOME/.local/share/chezmoi"
-HOST="$(hostnamectl --static)"
-
-case "$HOST" in
-    molly|funkypunk|badapple)
-        ;;
-    *)
-        echo "Unknown hostname: $HOST"
-        echo
-        echo "Expected one of:"
-        echo "  molly"
-        echo "  funkypunk"
-        echo "  badapple"
-        exit 1
-        ;;
+set -Eeuo pipefail
+REPO="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+CHECK=false
+case "${1:-}" in
+    '') ;;
+    --check) CHECK=true ;;
+    --help|-h) echo "Usage: ./bootstrap [--check]"; exit 0 ;;
+    *) echo "Usage: ./bootstrap [--check]" >&2; exit 1 ;;
 esac
-
-
-echo
-echo "=========================================="
-echo " Workstation bootstrap"
-echo " Host: $HOST"
-echo "=========================================="
-echo
-
-
-# ------------------------------------------------------------
-# Bootstrap dependencies
-# ------------------------------------------------------------
-
-echo "==> Installing bootstrap dependencies"
-
-sudo pacman -Syu --needed \
-    git \
-    base-devel \
-    ansible \
-    chezmoi
-
-
-# ------------------------------------------------------------
-# paru
-# ------------------------------------------------------------
-
-if ! command -v paru >/dev/null 2>&1; then
-
-    echo
-    echo "==> Installing paru"
-
-    tmpdir="$(mktemp -d)"
-
-    cleanup() {
-        rm -rf "$tmpdir"
-    }
-
-    trap cleanup EXIT
-
-    git clone \
-        https://aur.archlinux.org/paru.git \
-        "$tmpdir/paru"
-
-    (
-        cd "$tmpdir/paru"
-        makepkg -si --noconfirm
-    )
-
+if (( $# > 1 )); then echo "Too many arguments." >&2; exit 1; fi
+if (( EUID == 0 )); then
+    echo "Run as your regular user, without sudo." >&2; exit 1
 fi
-
-
-# ------------------------------------------------------------
-# Ansible
-# ------------------------------------------------------------
-
-echo
-echo "==> Provisioning $HOST"
-
+if ! command -v pacman >/dev/null; then
+    echo "This bootstrap requires Arch Linux." >&2; exit 1
+fi
+HOST="$(hostnamectl --static)"
+case "$HOST" in
+    molly|funkypunk|badapple) ;;
+    *) echo "Set hostname to molly, funkypunk or badapple before setup." >&2; exit 1 ;;
+esac
 cd "$REPO"
-
-ansible-playbook \
-    -i localhost, \
-    -c local \
-    -K \
-    ansible/workstation.yml
-
-
-# ------------------------------------------------------------
-# Dotfiles
-# ------------------------------------------------------------
-
-echo
-echo "==> Applying dotfiles"
-
-chezmoi apply
-
-
-# ------------------------------------------------------------
-# Final validation
-# ------------------------------------------------------------
-
-echo
-echo "==> Validating Sway"
-
-if sway --validate \
-    -c "$HOME/.config/sway/config"; then
-
-    echo "[OK] Sway config"
-
+STAGE=dependencies
+if ! "$CHECK"; then
+    LOG_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/workstation"
+    mkdir -p "$LOG_DIR"
+    LOG="$LOG_DIR/bootstrap-$(date +%Y%m%d-%H%M%S).log"
+    # Keep stdin attached to the terminal for sudo and AUR build prompts.
+    exec > >(tee -a "$LOG") 2>&1
+    on_error() {
+        local rc=$?
+        echo "[ERROR] Stage: $STAGE; log: $LOG. Fix the reported error and rerun ./bootstrap." >&2
+        exit "$rc"
+    }
+    trap on_error ERR
+    sudo pacman -Syu --needed git base-devel ansible-core chezmoi
+    ansible-galaxy collection install -r ansible/requirements.yml
 else
-
-    echo "[WARN] Sway configuration has a problem."
+    for dependency in ansible-playbook chezmoi; do
+        command -v "$dependency" >/dev/null || {
+            echo "Install bootstrap dependencies before --check." >&2; exit 1;
+        }
+    done
 fi
 
+STAGE=system
+if "$CHECK"; then
+    ansible-playbook -i localhost, -c local -K ansible/workstation.yml --check
+    chezmoi --source "$REPO" diff
+    echo "Preview only. AUR, Flatpak and post-install configuration were not executed."
+    exit 0
+fi
+ansible-playbook -i localhost, -c local -K ansible/workstation.yml
 
-echo
-echo "=========================================="
-echo " Setup complete"
-echo "=========================================="
-echo
-echo "Hostname : $HOST"
-echo
-echo "Reboot recommended."
-echo
+# Package manifests and machine data also belong to chezmoi's template data.
+# Capture command failures before mapfile (process substitution hides errors).
+STAGE=manifest
+aur_list="$(chezmoi --source "$REPO" execute-template \
+    '{{ range .packages.aur.common }}{{ . }}{{ "\n" }}{{ end }}')"
+# Go template variables must remain literal.
+# shellcheck disable=SC2016
+flatpak_list="$(chezmoi --source "$REPO" execute-template \
+    '{{ $p := index .machines .chezmoi.hostname }}{{ range .flatpak.common }}{{ . }}{{ "\n" }}{{ end }}{{ if $p.gaming }}{{ range .flatpak.gaming }}{{ . }}{{ "\n" }}{{ end }}{{ end }}')"
+
+STAGE=aur
+if [[ -n "$aur_list" ]]; then
+    mapfile -t aur_packages <<< "$aur_list"
+    missing_aur=()
+    for package in "${aur_packages[@]}"; do
+        if ! pacman -Q "$package" >/dev/null 2>&1; then missing_aur+=("$package"); fi
+    done
+    if (( ${#missing_aur[@]} > 0 )); then
+        if ! command -v paru >/dev/null; then
+            tmpdir="$(mktemp -d)"
+            trap 'rm -rf "$tmpdir"' EXIT
+            git clone https://aur.archlinux.org/paru.git "$tmpdir/paru"
+            # rustup comes from the official manifest; preserve its default.
+            rustup toolchain install stable --profile minimal
+            (cd "$tmpdir/paru"; RUSTUP_TOOLCHAIN=stable makepkg -si)
+        fi
+        paru -S --needed "${missing_aur[@]}"
+    fi
+    pacman -Q "${aur_packages[@]}"
+fi
+
+STAGE=flatpak
+if [[ -n "$flatpak_list" ]]; then
+    mapfile -t flatpak_apps <<< "$flatpak_list"
+    flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+    flatpak install --user --noninteractive flathub "${flatpak_apps[@]}"
+    for app in "${flatpak_apps[@]}"; do flatpak info --user "$app" >/dev/null; done
+fi
+
+STAGE=dotfiles
+chezmoi --source "$REPO" apply
+STAGE=validation
+chezmoi --source "$REPO" verify
+# Headless validation works from the fresh-install TTY, also with NVIDIA.
+WLR_BACKENDS=headless WLR_RENDERER=pixman sway --validate -c "$HOME/.config/sway/config"
+echo "[OK] Setup complete for $HOST. Reboot to activate services and group membership."
+echo "Log: $LOG"

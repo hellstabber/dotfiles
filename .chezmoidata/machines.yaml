@@ -1,0 +1,13 @@
+machines:
+  molly:
+    type: desktop
+    gpu: nouveau
+    gaming: false
+  funkypunk:
+    type: laptop
+    gpu: nvidia_hybrid
+    gaming: true
+  badapple:
+    type: laptop
+    gpu: intel
+    gaming: false

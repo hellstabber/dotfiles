@@ -1,327 +1,134 @@
 ---
-- name: Configure workstation
+- name: Configure Arch workstation
   hosts: localhost
   connection: local
   gather_facts: true
-
   vars_files:
     - ../.chezmoidata/packages.yaml
-
+    - ../.chezmoidata/machines.yaml
   vars:
     ansible_python_interpreter: /usr/bin/python
-
-    workstation_user: "{{ lookup('env', 'USER') }}"
-    workstation_home: "{{ lookup('env', 'HOME') }}"
+    workstation_user: "{{ ansible_facts['user_id'] }}"
+    workstation_home: "{{ ansible_facts['user_dir'] }}"
     hostname: "{{ ansible_facts['hostname'] }}"
-
-    profiles:
-      molly:
-        type: desktop
-        gpu: nouveau
-        gaming: false
-
-      funkypunk:
-        type: laptop
-        gpu: nvidia_hybrid
-        gaming: true
-
-      badapple:
-        type: laptop
-        gpu: intel
-        gaming: false
-
-    profile: "{{ profiles[hostname] }}"
+    profile: "{{ machines[hostname] }}"
+    system_services:
+      - NetworkManager.service
+      - greetd.service
+      - opensnitchd.service
+      - docker.service
 
   pre_tasks:
-    - name: Verify hostname
+    - name: Verify Arch and regular user
       ansible.builtin.assert:
         that:
-          - hostname in profiles
-        fail_msg: >-
-          Unknown hostname: {{ hostname }}.
-          Expected one of: molly, funkypunk, badapple.
+          - ansible_facts['distribution'] == 'Archlinux'
+          - ansible_facts['user_uid'] != 0
+          - hostname in machines
+        fail_msg: Run as your regular user on Arch with hostname molly, funkypunk or badapple.
 
-    - name: Verify package manifest
-      ansible.builtin.assert:
-        that:
-          - packages is mapping
-          - packages.official is mapping
-          - packages.official.common is sequence
-          - packages.official.common is not string
-          - packages.official[hostname] is defined
-          - packages.official[hostname] is sequence
-          - packages.official[hostname] is not string
-          - packages.official.gaming is sequence
-          - packages.official.gaming is not string
-          - packages.aur is mapping
-          - packages.aur.common is sequence
-          - packages.aur.common is not string
-          - flatpak is mapping
-          - flatpak.common is sequence
-          - flatpak.common is not string
-          - flatpak.gaming is sequence
-          - flatpak.gaming is not string
-        fail_msg: >-
-          packages.yaml is malformed. All package groups must be YAML lists.
-          Use [] for an intentionally empty list.
-
-    - name: Show selected profile
+    - name: Show machine profile
       ansible.builtin.debug:
-        msg:
-          - "Hostname: {{ hostname }}"
-          - "Type: {{ profile.type }}"
-          - "GPU: {{ profile.gpu }}"
-          - "Gaming: {{ profile.gaming }}"
+        msg: "{{ hostname }}: {{ profile.type }}, {{ profile.gpu }}, gaming={{ profile.gaming }}"
 
-  tasks:
-    - name: Enable multilib repository
-      become: true
-      ansible.builtin.replace:
-        path: /etc/pacman.conf
-        regexp: '^#\[multilib\]\n#Include = /etc/pacman.d/mirrorlist'
-        replace: |
-          [multilib]
-          Include = /etc/pacman.d/mirrorlist
-        backup: true
+    - name: Detect installed kernels for NVIDIA DKMS
+      ansible.builtin.command:
+        argv: [pacman, -Qq, linux, linux-lts, linux-zen, linux-hardened]
+      register: installed_kernels
+      changed_when: false
+      failed_when: false
+      check_mode: false
+      when: profile.gpu == 'nvidia_hybrid'
+
+    - name: Require a supported kernel for NVIDIA DKMS
+      ansible.builtin.assert:
+        that: installed_kernels.stdout_lines | length > 0
+        fail_msg: The Dell profile requires linux, linux-lts, linux-zen or linux-hardened.
+      when: profile.gpu == 'nvidia_hybrid'
 
     - name: Build official package list
       ansible.builtin.set_fact:
         official_packages: >-
-          {{
-            (
-              packages.official.common
-              + packages.official[hostname]
+          {{ (packages.official.common + packages.official[hostname]
               + (packages.official.gaming if profile.gaming else [])
-            )
-            | unique
-            | list
-          }}
+              + ((installed_kernels.stdout_lines | map('regex_replace', '$', '-headers') | list)
+                 if profile.gpu == 'nvidia_hybrid' else [])) | unique | list }}
 
-    - name: Show official package count
-      ansible.builtin.debug:
-        msg: "Official packages: {{ official_packages | length }}"
-
-    - name: Install and update official packages
+  tasks:
+    - name: Enable multilib
       become: true
-      ansible.builtin.command:
-        argv: >-
-          {{
-            ['pacman', '-Syu', '--needed', '--noconfirm']
-            + official_packages
-          }}
-      environment:
-        LC_ALL: C
-      register: pacman_result
-      changed_when: "'there is nothing to do' not in pacman_result.stdout"
-
-    - name: Check whether paru is available
-      ansible.builtin.command:
-        argv:
-          - paru
-          - --version
-      register: paru_check
-      changed_when: false
-      failed_when: false
-      check_mode: false
-
-    - name: Warn when paru is unavailable
-      ansible.builtin.debug:
-        msg: >-
-          paru is not installed. AUR packages will be skipped.
-          Run ./bootstrap again when aur.archlinux.org is reachable.
-      when:
-        - packages.aur.common | length > 0
-        - paru_check.rc != 0
-
-    - name: Install AUR packages
-      when:
-        - not ansible_check_mode
-        - packages.aur.common | length > 0
-        - paru_check.rc == 0
-      block:
-        - name: Install requested AUR packages with retries
-          ansible.builtin.command:
-            argv: >-
-              {{
-                ['paru', '-S', '--needed', '--noconfirm']
-                + packages.aur.common
-              }}
-          environment:
-            LC_ALL: C
-          register: aur_install
-          retries: 5
-          delay: 10
-          until: aur_install.rc == 0
-          changed_when: "'there is nothing to do' not in aur_install.stdout"
-      rescue:
-        - name: Warn about AUR failure
-          ansible.builtin.debug:
-            msg: >-
-              AUR packages could not be installed after 5 attempts.
-              Core provisioning will continue. Re-run ./bootstrap later;
-              already completed tasks are idempotent.
-
-    - name: Explain AUR check-mode behavior
-      ansible.builtin.debug:
-        msg: "AUR installation is intentionally skipped in --check mode."
-      when:
-        - ansible_check_mode
-        - packages.aur.common | length > 0
-
-    - name: Build Flatpak application list
-      ansible.builtin.set_fact:
-        flatpak_apps: >-
-          {{
-            (
-              flatpak.common
-              + (flatpak.gaming if profile.gaming else [])
-            )
-            | unique
-            | list
-          }}
-
-    - name: Configure Flatpak applications
-      when:
-        - not ansible_check_mode
-        - flatpak_apps | length > 0
-      block:
-        - name: Add Flathub remote
-          ansible.builtin.command:
-            argv:
-              - flatpak
-              - remote-add
-              - --user
-              - --if-not-exists
-              - flathub
-              - https://dl.flathub.org/repo/flathub.flatpakrepo
-          register: flathub_remote
-          retries: 5
-          delay: 10
-          until: flathub_remote.rc == 0
-          changed_when: false
-
-        - name: Install Flatpak applications
-          ansible.builtin.command:
-            argv: >-
-              {{
-                [
-                  'flatpak',
-                  'install',
-                  '--user',
-                  '--noninteractive',
-                  '--or-update',
-                  'flathub'
-                ]
-                + flatpak_apps
-              }}
-          register: flatpak_install
-          retries: 5
-          delay: 10
-          until: flatpak_install.rc == 0
-          changed_when: false
-      rescue:
-        - name: Warn about Flatpak failure
-          ansible.builtin.debug:
-            msg: >-
-              Flatpak applications could not be installed after 5 attempts.
-              Core provisioning will continue. Re-run ./bootstrap later.
-
-    - name: Configure greetd
-      become: true
-      ansible.builtin.copy:
-        dest: /etc/greetd/config.toml
-        owner: root
-        group: root
-        mode: "0644"
-        backup: true
-        content: |
-          [terminal]
-          vt = 1
-
-          [default_session]
-          command = "tuigreet --time --remember --cmd 'uwsm start sway.desktop'"
-          user = "greeter"
-
-    - name: Disable ly on badapple
-      become: true
-      ansible.builtin.systemd_service:
-        name: "{{ item }}"
-        enabled: false
-      loop:
-        - ly.service
-        - ly@tty1.service
-      when: hostname == "badapple"
-      failed_when: false
-
-    - name: Read greetd PAM configuration
-      become: true
-      ansible.builtin.slurp:
-        src: /etc/pam.d/greetd
-      register: greetd_pam
-
-    - name: Verify greetd PAM anchors
-      ansible.builtin.assert:
-        that:
-          - >-
-            (greetd_pam.content | b64decode)
-            is regex('(?m)^auth\s+include\s+system-local-login\s*$')
-          - >-
-            (greetd_pam.content | b64decode)
-            is regex('(?m)^session\s+include\s+system-local-login\s*$')
-        fail_msg: >-
-          /etc/pam.d/greetd does not have the expected Arch Linux layout.
-          Refusing to edit PAM automatically.
-
-    - name: Add GNOME Keyring authentication to greetd PAM
-      become: true
-      ansible.builtin.lineinfile:
-        path: /etc/pam.d/greetd
-        regexp: '^auth\s+optional\s+pam_gnome_keyring\.so\s*$'
-        line: 'auth       optional     pam_gnome_keyring.so'
-        insertafter: '^auth\s+include\s+system-local-login\s*$'
+      ansible.builtin.replace:
+        path: /etc/pacman.conf
+        regexp: '^#\[multilib\]\n#Include = /etc/pacman.d/mirrorlist'
+        replace: "[multilib]\nInclude = /etc/pacman.d/mirrorlist"
         backup: true
 
-    - name: Add GNOME Keyring session to greetd PAM
+    - name: Refresh repositories and upgrade system
       become: true
-      ansible.builtin.lineinfile:
-        path: /etc/pam.d/greetd
-        regexp: '^session\s+optional\s+pam_gnome_keyring\.so\s+auto_start\s*$'
-        line: 'session    optional     pam_gnome_keyring.so auto_start'
-        insertafter: '^session\s+include\s+system-local-login\s*$'
+      community.general.pacman:
+        update_cache: true
+        upgrade: true
 
-    - name: Enable system services
+    - name: Install official packages
       become: true
-      ansible.builtin.systemd_service:
-        name: "{{ item }}"
-        enabled: true
-      loop:
-        - NetworkManager.service
-        - greetd.service
-        - opensnitchd.service
-        - docker.service
+      community.general.pacman:
+        name: "{{ official_packages }}"
+        state: present
 
-    - name: Add workstation user to docker group
-      become: true
-      ansible.builtin.user:
-        name: "{{ workstation_user }}"
-        groups:
-          - docker
-        append: true
+    # Pristine check mode cannot configure files/units/groups from packages
+    # which have only been predicted, not installed. No repair migrations.
+    - name: Configure installed system
+      when: not ansible_check_mode
+      block:
+        - name: Configure greetd
+          become: true
+          ansible.builtin.copy:
+            dest: /etc/greetd/config.toml
+            owner: root
+            group: root
+            mode: "0644"
+            backup: true
+            content: |
+              [terminal]
+              vt = 1
 
-    - name: Enable Syncthing user service
-      ansible.builtin.systemd_service:
-        name: syncthing.service
-        scope: user
-        enabled: true
+              [default_session]
+              command = "tuigreet --time --remember --cmd 'uwsm start sway.desktop'"
+              user = "greeter"
 
-    - name: Show completion summary
-      ansible.builtin.debug:
-        msg:
-          - "Core workstation provisioning complete."
-          - "Machine: {{ hostname }}"
-          - "Profile: {{ profile.type }}"
-          - "GPU profile: {{ profile.gpu }}"
-          - "Gaming: {{ profile.gaming }}"
-          - "AUR helper available: {{ paru_check.rc == 0 }}"
-          - "Flatpak applications requested: {{ flatpak_apps | length }}"
+        - name: Enable system services for next boot
+          become: true
+          ansible.builtin.systemd_service:
+            name: "{{ item }}"
+            enabled: true
+          loop: "{{ system_services }}"
 
+        - name: Add user to docker group
+          become: true
+          ansible.builtin.user:
+            name: "{{ workstation_user }}"
+            groups: docker
+            append: true
+
+        - name: Create Syncthing user service directory
+          ansible.builtin.file:
+            path: "{{ workstation_home }}/.config/systemd/user/default.target.wants"
+            state: directory
+            mode: "0755"
+
+        - name: Enable Syncthing for next user session
+          ansible.builtin.file:
+            src: /usr/lib/systemd/user/syncthing.service
+            dest: "{{ workstation_home }}/.config/systemd/user/default.target.wants/syncthing.service"
+            state: link
+
+        - name: Verify official packages
+          ansible.builtin.command:
+            argv: "{{ ['pacman', '-Q'] + official_packages }}"
+          changed_when: false
+
+        - name: Verify enabled system services
+          ansible.builtin.command:
+            argv: [systemctl, is-enabled, "{{ item }}"]
+          changed_when: false
+          loop: "{{ system_services }}"

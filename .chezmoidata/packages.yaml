@@ -172,7 +172,9 @@ packages:
       - nvidia-prime
 
     # MacBook Air 2017
-    badapple: []
+    badapple:
+      - mesa
+      - vulkan-intel
 
     # Only machines with gaming enabled
     gaming:
