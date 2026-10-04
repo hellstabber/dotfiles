@@ -19,6 +19,12 @@ packages:
       - zsh
       - mise
       - rustup
+      - zig
+      - zls
+      - shellcheck
+      - discount
+      - graphviz
+
 
       # Sway / Wayland
       - sway
@@ -127,6 +133,11 @@ packages:
       - pastel
       - tealdeer
       - restic
+      - imagemagick
+
+      # Mail
+      - isync
+      - msmtp
 
       # Laptop / hardware utilities
       - brightnessctl
@@ -184,6 +195,7 @@ packages:
       - vesktop-bin
       - ayugram-desktop-bin
       - mepo
+      - mu
 
 flatpak:
   common: []

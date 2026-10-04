@@ -6,7 +6,7 @@
 
 (setq user-full-name "Eren Kaplan")
 
-(setq doom-theme 'doom-one)
+(setq doom-theme 'zenpunk)
 (setq display-line-numbers-type 'relative)
 (setq confirm-kill-emacs nil)
 
@@ -20,7 +20,7 @@
 ;; ------------------------------------------------------------
 
 (setq doom-font
-      (font-spec :family "monospace" :size 14))
+      (font-spec :family "IBM Plex Mono" :size 14))
 
 
 ;; ------------------------------------------------------------
@@ -37,19 +37,41 @@
 
 (setq org-directory "~/notes/org/")
 
+;; Make sure the note directories exist.
+(dolist (dir '("~/notes/org/agenda/"
+               "~/notes/org/roam/"
+               "~/notes/org/roam/reference/"))
+  (make-directory (expand-file-name dir) t))
+
 (after! org
   (setq org-startup-indented t
         org-hide-emphasis-markers t
         org-pretty-entities t
         org-log-done 'time
 
+        org-agenda-span 'week
+        org-agenda-start-on-weekday 1
+
         org-agenda-files
         '("~/notes/org/agenda/")
 
         org-default-notes-file
-        "~/notes/org/agenda/inbox.org"))
+        "~/notes/org/agenda/inbox.org"
 
-;; Capture
+        org-todo-keywords
+        '((sequence
+           "TODO(t)"
+           "NEXT(n)"
+           "WAIT(w@)"
+           "|"
+           "DONE(d!)"
+           "CANCELLED(c@)"))))
+
+
+;; ------------------------------------------------------------
+;; Org Capture
+;; ------------------------------------------------------------
+
 (after! org
   (setq org-capture-templates
         '(("t" "Task" entry
@@ -60,9 +82,14 @@
            (file "~/notes/org/agenda/inbox.org")
            "* %?\n  %U\n")
 
+          ("j" "Journal" entry
+           (file+datetree "~/notes/org/agenda/journal.org")
+           "* %<%H:%M> %?\n")
+
           ("s" "Someday" entry
            (file "~/notes/org/agenda/someday.org")
            "* TODO %?\n  %U\n"))))
+
 
 ;; ------------------------------------------------------------
 ;; Org-roam
@@ -72,15 +99,13 @@
   (setq org-roam-directory
         (file-truename "~/notes/org/roam/"))
 
+  ;; Keep the database out of the notes directory.
+  ;; The generated database does not need to be synced/backed up.
   (setq org-roam-db-location
-        (expand-file-name "org-roam.db"
-                          org-roam-directory))
+        (expand-file-name "org-roam.db" doom-cache-dir))
 
-  (org-roam-db-autosync-mode))
-
-(after! org-roam
   (setq org-roam-capture-templates
-        '(("d" "default" plain
+        '(("d" "Default" plain
            "%?"
            :target
            (file+head
@@ -88,24 +113,32 @@
             "#+title: ${title}\n#+date: %U\n\n")
            :unnarrowed t)
 
-          ("r" "reference" plain
+          ("r" "Reference" plain
            "* Source\n%?\n\n* Notes\n"
            :target
            (file+head
             "reference/%<%Y%m%d%H%M%S>-${slug}.org"
             "#+title: ${title}\n#+date: %U\n#+filetags: :reference:\n\n")
-           :unnarrowed t))))
+           :unnarrowed t)))
 
+  (org-roam-db-autosync-mode 1))
 
 
 ;; ------------------------------------------------------------
-;; LSP
+;; Eglot / LSP
 ;; ------------------------------------------------------------
 
-(after! lsp-mode
-  (setq lsp-enable-symbol-highlighting t
-        lsp-headerline-breadcrumb-enable t
-        lsp-modeline-code-actions-enable t))
+(after! eglot
+  (setq eglot-autoshutdown t))
+
+
+;; ------------------------------------------------------------
+;; RSS
+;; ------------------------------------------------------------
+
+(after! elfeed-org
+  (setq rmh-elfeed-org-files
+        (list (expand-file-name "elfeed.org" org-directory))))
 
 
 ;; ------------------------------------------------------------
