@@ -72,6 +72,13 @@ input "type:pointer" {
     pointer_accel 0
 }
 
+{{ if eq (index .machines .chezmoi.hostname).type "laptop" }}
+input "type:touchpad" {
+    tap disabled
+    natural_scroll enabled
+}
+{{ end }}
+
 
 # ============================================================
 # Outputs

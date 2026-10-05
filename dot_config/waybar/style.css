@@ -166,3 +166,17 @@ tooltip label {
     color: @nr_text;
     margin-right: 4px;
 }
+
+/* Compact spacing on laptops; the existing drawer layout is preserved. */
+window#waybar.laptop .module {
+    margin: 0 5px;
+}
+
+window#waybar.laptop #workspaces {
+    margin-left: 10px;
+}
+
+window#waybar.laptop #workspaces button {
+    min-width: 24px;
+    padding: 4px;
+}

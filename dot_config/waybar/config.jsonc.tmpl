@@ -1,7 +1,9 @@
+{{ $laptop := eq (index .machines .chezmoi.hostname).type "laptop" -}}
 {
   "layer": "top",
   "position": "top",
   "height": 28,
+  "name": "{{ if $laptop }}laptop{{ else }}desktop{{ end }}",
 
   "modules-left": [
     "privacy",
@@ -212,7 +214,7 @@
     "format": "{}",
     "icon": false,
 
-    "max-length": 160,
+    "max-length": {{ if $laptop }}40{{ else }}160{{ end }},
 
     "rewrite": {
       "(.*) — LibreWolf": "WEB $1",
@@ -301,9 +303,11 @@
     },
 
     "format-time": "{H}:{m}",
+    "tooltip": true,
+    "tooltip-format": "{timeTo}\nPower: {power:.1f} W",
 
     "format":
-      "{icon} {time} <span color='#7f7187'>{capacity}%</span>",
+      "{icon} <span color='#7f7187'>{capacity}%</span>",
 
     "format-discharging":
       "{icon} <span color='#b89ad0'>{capacity}%</span>",
@@ -315,7 +319,7 @@
       "{icon} <span color='#8f2d3c'>{capacity}%</span>",
 
     "format-charging":
-      "CHG <span color='#e6dfe8'>{capacity}%</span> <span color='#7f7187'>@ {power:2.0f}W</span>",
+      "CHG <span color='#e6dfe8'>{capacity}%</span>",
 
     "format-full":
       "{icon} <span color='#7f7187'>{capacity}%</span>",
@@ -339,14 +343,14 @@
   // ==========================================================
 
   "custom/weather": {
-    "exec":
-      "curl -fsS --max-time 5 'https://wttr.in/Ankara?format=%c+%t'",
+    "exec": "~/.local/bin/waybar-weather",
+    "return-type": "json",
 
     "interval": 1800,
 
     "format": "{}",
 
-    "tooltip": false
+    "tooltip": true
   },
 
 

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/waybar"
+cache_file="$cache_dir/weather-Ankara"
+ttl=1800
+now="$(date +%s)"
+weather=''
+updated=0
+state=unavailable
+
+if [[ -s "$cache_file" ]]; then
+    weather="$(< "$cache_file")"
+    updated="$(stat -c %Y "$cache_file")"
+    state=cached
+fi
+
+# Only request new data when the cache is absent or older than 30 minutes.
+if [[ -z "$weather" ]] || (( now - updated >= ttl )); then
+    if fresh="$(curl -fsS --max-time 5 'https://wttr.in/Ankara?format=%c+%t')" \
+        && [[ "$fresh" =~ [+-]?[0-9]+°[CF] ]]; then
+        weather="${fresh//$'\r'/}"
+        weather="${weather//$'\n'/ }"
+        mkdir -p "$cache_dir"
+        temporary="$(mktemp "$cache_dir/.weather.XXXXXX")"
+        trap 'rm -f "$temporary"' EXIT
+        printf '%s\n' "$weather" > "$temporary"
+        mv -f "$temporary" "$cache_file"
+        updated="$(date +%s)"
+        state=fresh
+    elif [[ -n "$weather" ]]; then
+        state=stale
+    fi
+fi
+
+if [[ -z "$weather" ]]; then
+    weather='--'
+    tooltip='Ankara: weather unavailable; no cached result.'
+else
+    age=$(( (now - updated) / 60 ))
+    (( age < 0 )) && age=0
+    tooltip="Ankara: updated $age min ago."
+    if [[ "$state" == stale ]]; then
+        tooltip+=$'\nOffline or request failed; showing last successful result.'
+    fi
+fi
+
+jq -cn --arg text "$weather" --arg tooltip "$tooltip" --arg class "$state" \
+    '{text: $text, tooltip: $tooltip, class: $class}'
